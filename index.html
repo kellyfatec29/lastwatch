@@ -3,874 +3,584 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#7c3aed">
-    <meta name="description" content="Acompanhe suas séries e filmes favoritos">
-    <title>LastWatch - Nunca mais perca o episódio</title>
-    
-    <!-- Bootstrap 5 CSS -->
+    <title>LastWatch</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
-    
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Manifest PWA -->
-    <link rel="manifest" href="manifest.json">
-    
     <style>
-        :root {
-            --primary: #7c3aed;
-            --secondary: #ec4899;
-            --dark: #111827;
-            --darker: #0a0f1a;
-            --gray: #1f2937;
-            --light-gray: #374151;
+        body { background: #0a0f1a; color: white; min-height: 100vh; }
+        .auth-container { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .auth-box { background: rgba(17, 24, 39, 0.95); border-radius: 20px; padding: 40px; max-width: 450px; width: 100%; }
+        .logo h1 { font-size: 3rem; font-weight: 800; background: linear-gradient(135deg, #7c3aed, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .form-control { background: #1f2937; border: 2px solid #374151; color: white; margin-bottom: 15px; }
+        .form-control:focus { background: #1f2937; border-color: #7c3aed; color: white; }
+        .btn-primary { background: linear-gradient(135deg, #7c3aed, #ec4899); border: none; width: 100%; padding: 14px; }
+        .app-container { display: none; }
+        .navbar { background: rgba(17, 24, 39, 0.95); padding: 15px 0; }
+        .nav-brand { font-size: 1.8rem; font-weight: 800; background: linear-gradient(135deg, #7c3aed, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .nav-btn { background: #1f2937; border: none; color: white; padding: 10px 20px; border-radius: 8px; margin: 0 5px; cursor: pointer; }
+        .nav-btn.active { background: linear-gradient(135deg, #7c3aed, #ec4899); }
+        .search-container { padding: 30px 0; }
+        .search-box { position: relative; margin-bottom: 40px; }
+        .search-input { 
+            width: 100%; 
+            background: #1f2937; 
+            border: 2px solid #374151; 
+            color: white; 
+            padding: 18px 24px; 
+            border-radius: 16px; 
+            font-size: 1.1rem;
+            transition: all 0.3s;
         }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        .search-input:focus { 
+            outline: none; 
+            border-color: #7c3aed; 
+            box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.1);
         }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, var(--darker) 0%, var(--dark) 100%);
-            color: white;
-            min-height: 100vh;
+        .search-input::placeholder { color: #6b7280; }
+        .search-icon { position: absolute; right: 24px; top: 50%; transform: translateY(-50%); color: #6b7280; font-size: 1.2rem; pointer-events: none; }
+        .search-info { text-align: center; color: #9ca3af; margin-bottom: 30px; font-size: 0.95rem; }
+        .media-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 20px; }
+        .media-card { 
+            background: #1f2937; 
+            border-radius: 16px; 
+            overflow: hidden; 
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 2px solid transparent;
         }
-        
-        /* Animações */
+        .media-card:hover { 
+            transform: translateY(-8px) scale(1.02); 
+            box-shadow: 0 20px 40px rgba(124, 58, 237, 0.3);
+            border-color: #7c3aed;
+        }
+        .media-card img { width: 100%; height: 270px; object-fit: cover; transition: transform 0.3s; }
+        .media-card:hover img { transform: scale(1.05); }
+        .media-card-body { padding: 16px; }
+        .media-card-title { 
+            font-weight: 700; 
+            font-size: 0.95rem; 
+            margin-bottom: 8px; 
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            line-height: 1.3;
+            height: 2.6em;
+        }
+        .media-card-meta { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: 12px; 
+            font-size: 0.85rem;
+        }
+        .media-card-year { color: #9ca3af; }
+        .media-card-type { 
+            background: linear-gradient(135deg, #7c3aed, #ec4899); 
+            color: white; 
+            padding: 4px 10px; 
+            border-radius: 12px; 
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .btn-add { 
+            width: 100%; 
+            background: linear-gradient(135deg, #7c3aed, #ec4899); 
+            border: none; 
+            padding: 12px; 
+            color: white; 
+            cursor: pointer; 
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .btn-add:hover { 
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(124, 58, 237, 0.4);
+        }
+        .btn-add:active { transform: translateY(0); }
+        .empty-search { 
+            text-align: center; 
+            padding: 80px 20px; 
+            color: #6b7280;
+        }
+        .empty-search i { 
+            font-size: 5rem; 
+            color: #374151; 
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+        .empty-search h3 { 
+            color: #9ca3af; 
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+        .empty-search p { 
+            font-size: 1rem;
+            color: #6b7280;
+        }
+        .loading-spinner { 
+            text-align: center; 
+            padding: 60px 20px; 
+        }
+        .spinner { 
+            border: 4px solid #374151; 
+            border-top: 4px solid #7c3aed; 
+            border-radius: 50%; 
+            width: 60px; 
+            height: 60px; 
+            animation: spin 0.8s linear infinite; 
+            margin: 0 auto 20px;
+        }
+        @keyframes spin { 
+            0% { transform: rotate(0deg); } 
+            100% { transform: rotate(360deg); } 
+        }
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
+        .fade-in { animation: fadeIn 0.4s ease-out; }
         
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
+        /* Toast notification */
+        .toast-container { 
+            position: fixed; 
+            top: 20px; 
+            right: 20px; 
+            z-index: 9999;
         }
-        
-        .fade-in {
-            animation: fadeIn 0.5s ease-out;
-        }
-        
-        /* Auth Screen */
-        .auth-container {
-            min-height: 100vh;
+        .toast { 
+            background: #1f2937; 
+            color: white; 
+            padding: 16px 24px; 
+            border-radius: 12px; 
+            margin-bottom: 12px; 
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
             display: flex;
             align-items: center;
-            justify-content: center;
-            padding: 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            gap: 12px;
+            min-width: 300px;
+            animation: slideIn 0.3s ease-out;
+            border-left: 4px solid #7c3aed;
         }
-        
-        .auth-box {
-            background: rgba(17, 24, 39, 0.95);
-            border-radius: 20px;
-            padding: 40px;
-            max-width: 450px;
-            width: 100%;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-            backdrop-filter: blur(10px);
+        .toast.error { border-left-color: #ef4444; }
+        .toast.success { border-left-color: #10b981; }
+        .toast i { font-size: 1.3rem; }
+        @keyframes slideIn {
+            from { transform: translateX(400px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
         }
-        
-        .logo {
-            text-align: center;
-            margin-bottom: 30px;
+        @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(400px); opacity: 0; }
         }
-        
-        .logo h1 {
-            font-size: 3rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 10px;
-        }
-        
-        .logo p {
-            color: #9ca3af;
-            font-size: 0.95rem;
-        }
-        
-        .auth-tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 30px;
-        }
-        
-        .auth-tab {
-            flex: 1;
-            padding: 12px;
-            border: none;
-            border-radius: 10px;
-            background: var(--light-gray);
-            color: #9ca3af;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        
-        .auth-tab.active {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white;
-        }
-        
-        .form-control {
-            background: var(--gray);
-            border: 2px solid var(--light-gray);
-            color: white;
-            padding: 12px 16px;
-            border-radius: 10px;
-            margin-bottom: 15px;
-        }
-        
-        .form-control:focus {
-            background: var(--gray);
-            border-color: var(--primary);
-            color: white;
-            box-shadow: 0 0 0 0.2rem rgba(124, 58, 237, 0.25);
-        }
-        
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            border: none;
-            padding: 14px;
-            border-radius: 10px;
-            font-weight: 700;
-            width: 100%;
-            transition: transform 0.2s;
-        }
-        
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(124, 58, 237, 0.4);
-        }
-        
-        /* Main App */
-        .app-container {
-            display: none;
-        }
-        
-        .navbar {
-            background: rgba(17, 24, 39, 0.95);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid var(--light-gray);
-            padding: 15px 0;
-        }
-        
-        .nav-brand {
-            font-size: 1.8rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
-        .nav-btn {
-            background: var(--gray);
-            border: none;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 8px;
-            margin: 0 5px;
-            font-weight: 600;
-            transition: all 0.3s;
-        }
-        
-        .nav-btn.active {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-        }
-        
-        .nav-btn:hover {
-            transform: translateY(-2px);
-        }
-        
-        .btn-logout {
-            background: #dc2626;
-        }
-        
-        .btn-logout:hover {
-            background: #b91c1c;
-        }
-        
-        /* Search Section */
-        .search-section {
-            padding: 40px 0;
-        }
-        
-        .search-box {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 40px;
-        }
-        
-        .search-input {
-            flex: 1;
-            background: var(--gray);
-            border: 2px solid var(--light-gray);
-            color: white;
-            padding: 15px 20px;
-            border-radius: 12px;
-            font-size: 1.1rem;
-        }
-        
-        .search-input:focus {
-            outline: none;
-            border-color: var(--primary);
-        }
-        
-        .btn-search {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            border: none;
-            padding: 15px 30px;
-            border-radius: 12px;
-            color: white;
-            font-weight: 700;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-        
-        .btn-search:hover {
-            transform: translateY(-2px);
-        }
-        
-        /* Media Cards */
-        .media-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 25px;
-        }
-        
-        .media-card {
-            background: var(--gray);
-            border-radius: 15px;
-            overflow: hidden;
-            transition: transform 0.3s, box-shadow 0.3s;
-            cursor: pointer;
-        }
-        
-        .media-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 40px rgba(124, 58, 237, 0.3);
-        }
-        
-        .media-card img {
-            width: 100%;
-            height: 300px;
-            object-fit: cover;
-        }
-        
-        .media-card-body {
-            padding: 15px;
-        }
-        
-        .media-card-title {
-            font-weight: 700;
-            font-size: 1rem;
-            margin-bottom: 8px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        
-        .media-card-year {
-            color: #9ca3af;
-            font-size: 0.85rem;
-            margin-bottom: 12px;
-        }
-        
-        .btn-add {
-            width: 100%;
-            background: var(--primary);
-            border: none;
-            padding: 10px;
-            border-radius: 8px;
-            color: white;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        
-        .btn-add:hover {
-            background: var(--secondary);
-        }
-        
-        /* My List */
-        .list-item {
-            background: var(--gray);
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 20px;
-            display: flex;
-            gap: 20px;
-            transition: transform 0.3s;
-        }
-        
-        .list-item:hover {
-            transform: translateX(10px);
-        }
-        
-        .list-item img {
-            width: 120px;
-            height: 180px;
-            border-radius: 10px;
-            object-fit: cover;
-        }
-        
-        .list-item-content {
-            flex: 1;
-        }
-        
-        .list-item-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 10px;
-        }
-        
-        .list-item-meta {
-            color: #9ca3af;
-            margin-bottom: 20px;
-        }
-        
-        .progress-controls {
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-            margin-bottom: 15px;
-        }
-        
-        .progress-group {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-        
-        .progress-group label {
-            font-size: 0.85rem;
-            color: #9ca3af;
-        }
-        
-        .progress-group input {
-            width: 100px;
-            padding: 8px 12px;
-            background: var(--light-gray);
-            border: 1px solid var(--light-gray);
-            border-radius: 8px;
-            color: white;
-        }
-        
-        .btn-remove {
-            background: #dc2626;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            color: white;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        
-        .btn-remove:hover {
-            background: #b91c1c;
-        }
-        
-        .empty-state {
-            text-align: center;
-            padding: 80px 20px;
-        }
-        
-        .empty-state i {
-            font-size: 5rem;
-            color: var(--light-gray);
-            margin-bottom: 20px;
-        }
-        
-        .empty-state h3 {
-            color: #9ca3af;
-            margin-bottom: 20px;
-        }
-        
-        .alert {
-            border-radius: 12px;
-            padding: 15px 20px;
-            margin-bottom: 20px;
-        }
-        
-        .hidden {
-            display: none !important;
-        }
-        
-        .loading {
-            text-align: center;
-            padding: 40px;
-        }
-        
-        .spinner {
-            border: 4px solid var(--light-gray);
-            border-top: 4px solid var(--primary);
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        /* Responsive */
-        @media (max-width: 768px) {
-            .media-grid {
-                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-                gap: 15px;
-            }
-            
-            .list-item {
-                flex-direction: column;
-            }
-            
-            .list-item img {
-                width: 100%;
-                height: 250px;
-            }
-            
-            .nav-btn {
-                padding: 8px 12px;
-                font-size: 0.9rem;
-            }
-        }
+        .toast.hiding { animation: slideOut 0.3s ease-out; }
+        .list-item { background: #1f2937; border-radius: 15px; padding: 20px; margin-bottom: 20px; display: flex; gap: 20px; }
+        .list-item img { width: 120px; height: 180px; border-radius: 10px; object-fit: cover; }
+        .btn-remove { background: #dc2626; border: none; padding: 10px 20px; color: white; cursor: pointer; }
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
-    <!-- Auth Container -->
     <div id="authContainer" class="auth-container">
-        <div class="auth-box fade-in">
-            <div class="logo">
+        <div class="auth-box">
+            <div class="logo text-center mb-4">
                 <h1>LastWatch</h1>
                 <p>Nunca mais perca o episódio</p>
             </div>
-            
-            <div class="auth-tabs">
-                <button class="auth-tab active" onclick="switchTab('login')">Login</button>
-                <button class="auth-tab" onclick="switchTab('signup')">Cadastro</button>
-            </div>
-            
             <div id="authError" class="alert alert-danger hidden"></div>
-            
             <div id="loginForm">
-                <input type="email" id="loginEmail" class="form-control" placeholder="Email" required>
-                <input type="password" id="loginPassword" class="form-control" placeholder="Senha" required>
-                <button class="btn btn-primary" onclick="handleLogin()">
-                    <i class="fas fa-sign-in-alt"></i> Entrar
-                </button>
+                <input type="email" id="loginEmail" class="form-control" placeholder="Email">
+                <input type="password" id="loginPassword" class="form-control" placeholder="Senha">
+                <button class="btn btn-primary" id="btnLogin">Entrar</button>
             </div>
-            
             <div id="signupForm" class="hidden">
-                <input type="email" id="signupEmail" class="form-control" placeholder="Email" required>
-                <input type="password" id="signupPassword" class="form-control" placeholder="Senha (mínimo 6 caracteres)" required>
-                <input type="password" id="signupConfirmPassword" class="form-control" placeholder="Confirmar Senha" required>
-                <button class="btn btn-primary" onclick="handleSignup()">
-                    <i class="fas fa-user-plus"></i> Criar Conta
-                </button>
+                <input type="email" id="signupEmail" class="form-control" placeholder="Email">
+                <input type="password" id="signupPassword" class="form-control" placeholder="Senha (min 6)">
+                <button class="btn btn-primary" id="btnSignup">Criar Conta</button>
             </div>
+            <button class="btn btn-secondary mt-3 w-100" id="btnToggleAuth">Criar nova conta</button>
         </div>
     </div>
-    
-    <!-- App Container -->
+
     <div id="appContainer" class="app-container">
-        <!-- Navbar -->
         <nav class="navbar">
             <div class="container">
-                <div class="d-flex justify-content-between align-items-center w-100">
-                    <span class="nav-brand">LastWatch</span>
-                    <div>
-                        <button class="nav-btn active" id="btnMyList" onclick="showView('mylist')">
-                            <i class="fas fa-list"></i> Minha Lista
-                        </button>
-                        <button class="nav-btn" id="btnSearch" onclick="showView('search')">
-                            <i class="fas fa-search"></i> Pesquisar
-                        </button>
-                        <button class="nav-btn btn-logout" onclick="handleLogout()">
-                            <i class="fas fa-sign-out-alt"></i> Sair
-                        </button>
-                    </div>
+                <span class="nav-brand">LastWatch</span>
+                <div>
+                    <button class="nav-btn active" id="btnMyList">Minha Lista</button>
+                    <button class="nav-btn" id="btnSearch">Pesquisar</button>
+                    <button class="nav-btn" id="btnLogout" style="background:#dc2626">Sair</button>
                 </div>
             </div>
         </nav>
-        
-        <div class="container">
-            <div id="appError" class="alert alert-danger hidden mt-4"></div>
-            
-            <!-- Search View -->
-            <div id="searchView" class="search-section hidden">
-                <div class="search-box">
-                    <input type="text" id="searchInput" class="search-input" placeholder="Digite o nome do filme ou série..." onkeypress="handleSearchKeyPress(event)">
-                    <button class="btn-search" onclick="handleSearch()">
-                        <i class="fas fa-search"></i> Buscar
-                    </button>
+        <div class="container mt-4">
+            <div id="appError" class="alert alert-danger hidden"></div>
+            <div id="searchView" class="hidden">
+                <div class="search-container">
+                    <div class="search-box">
+                        <input 
+                            type="text" 
+                            id="searchInput" 
+                            class="search-input" 
+                            placeholder="Digite o nome do filme ou série..."
+                            autocomplete="off"
+                        >
+                        <i class="fas fa-search search-icon"></i>
+                    </div>
+                    <div class="search-info" id="searchInfo">
+                        <i class="fas fa-lightbulb"></i> Digite pelo menos 3 caracteres para buscar
+                    </div>
+                    <div id="searchLoading" class="loading-spinner hidden">
+                        <div class="spinner"></div>
+                        <p style="color: #9ca3af;">Buscando filmes e séries...</p>
+                    </div>
+                    <div id="searchResults" class="media-grid"></div>
+                    <div id="emptySearch" class="empty-search hidden">
+                        <i class="fas fa-film"></i>
+                        <h3>Comece a pesquisar</h3>
+                        <p>Digite o nome de um filme ou série para encontrar</p>
+                    </div>
                 </div>
-                
-                <div id="searchLoading" class="loading hidden">
-                    <div class="spinner"></div>
-                    <p class="mt-3">Buscando...</p>
-                </div>
-                
-                <div id="searchResults" class="media-grid"></div>
             </div>
-            
-            <!-- My List View -->
-            <div id="myListView" class="search-section">
-                <h2 class="mb-4"><i class="fas fa-bookmark"></i> Minha Lista de Acompanhamento</h2>
-                
-                <div id="listLoading" class="loading hidden">
-                    <div class="spinner"></div>
-                    <p class="mt-3">Carregando...</p>
-                </div>
-                
+            <div id="myListView">
+                <h2>Minha Lista</h2>
                 <div id="myListContent"></div>
             </div>
         </div>
     </div>
-    
-    <!-- Firebase SDK -->
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-app-compat.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-auth-compat.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-firestore-compat.min.js"></script>
     
     <script>
-        // ===== CONFIGURAÇÃO =====
-        // IMPORTANTE: Substitua com suas credenciais do Firebase
         const firebaseConfig = {
-            apiKey: "SUA_API_KEY",
-            authDomain: "SEU_PROJETO.firebaseapp.com",
-            projectId: "SEU_PROJETO_ID",
-            storageBucket: "SEU_PROJETO.appspot.com",
-            messagingSenderId: "SEU_SENDER_ID",
-            appId: "SEU_APP_ID"
+            apiKey: "AIzaSyD57nzPfUhJAFn0haIGANSWTKODgeQ0nLA",
+            authDomain: "lastwatch-e2c32.firebaseapp.com",
+            projectId: "lastwatch-e2c32",
+            storageBucket: "lastwatch-e2c32.firebasestorage.app",
+            messagingSenderId: "1060501735643",
+            appId: "1:1060501735643:web:793d4cfa7b524dd7c1e4fe"
         };
-        
-        // Obtenha sua chave em: https://www.omdbapi.com/apikey.aspx
-        const OMDB_API_KEY = 'SUA_OMDB_API_KEY';
-        
-        // Inicializar Firebase
-        firebase.initializeApp(firebaseConfig);
+        const OMDB_API_KEY = 'f860b830';
+
+        if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.firestore();
-        
         let currentUser = null;
-        let currentView = 'mylist';
-        
-        // ===== AUTH FUNCTIONS =====
-        function switchTab(tab) {
-            const loginTab = document.querySelector('.auth-tab:first-child');
-            const signupTab = document.querySelector('.auth-tab:last-child');
-            const loginForm = document.getElementById('loginForm');
-            const signupForm = document.getElementById('signupForm');
-            
-            if (tab === 'login') {
-                loginTab.classList.add('active');
-                signupTab.classList.remove('active');
-                loginForm.classList.remove('hidden');
-                signupForm.classList.add('hidden');
+
+        // Auth state
+        auth.onAuthStateChanged(user => {
+            currentUser = user;
+            document.getElementById('authContainer').style.display = user ? 'none' : 'flex';
+            document.getElementById('appContainer').style.display = user ? 'block' : 'none';
+            if(user) loadMyList();
+        });
+
+        // Toggle auth form
+        document.getElementById('btnToggleAuth').addEventListener('click', () => {
+            const login = document.getElementById('loginForm');
+            const signup = document.getElementById('signupForm');
+            const btn = document.getElementById('btnToggleAuth');
+            if(login.classList.contains('hidden')) {
+                login.classList.remove('hidden');
+                signup.classList.add('hidden');
+                btn.textContent = 'Criar nova conta';
             } else {
-                loginTab.classList.remove('active');
-                signupTab.classList.add('active');
-                loginForm.classList.add('hidden');
-                signupForm.classList.remove('hidden');
+                login.classList.add('hidden');
+                signup.classList.remove('hidden');
+                btn.textContent = 'Já tenho conta';
             }
-            hideError('authError');
-        }
-        
-        async function handleLogin() {
+        });
+
+        // Login
+        document.getElementById('btnLogin').addEventListener('click', async () => {
             const email = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPassword').value;
-            
-            if (!email || !password) {
-                showError('authError', 'Preencha todos os campos');
-                return;
-            }
-            
             try {
                 await auth.signInWithEmailAndPassword(email, password);
-            } catch (error) {
-                showError('authError', getErrorMessage(error.code));
+            } catch(e) {
+                document.getElementById('authError').textContent = e.message;
+                document.getElementById('authError').classList.remove('hidden');
             }
-        }
-        
-        async function handleSignup() {
+        });
+
+        // Signup
+        document.getElementById('btnSignup').addEventListener('click', async () => {
             const email = document.getElementById('signupEmail').value;
             const password = document.getElementById('signupPassword').value;
-            const confirmPassword = document.getElementById('signupConfirmPassword').value;
-            
-            if (!email || !password || !confirmPassword) {
-                showError('authError', 'Preencha todos os campos');
-                return;
-            }
-            
-            if (password.length < 6) {
-                showError('authError', 'A senha deve ter no mínimo 6 caracteres');
-                return;
-            }
-            
-            if (password !== confirmPassword) {
-                showError('authError', 'As senhas não coincidem');
-                return;
-            }
-            
             try {
                 await auth.createUserWithEmailAndPassword(email, password);
-            } catch (error) {
-                showError('authError', getErrorMessage(error.code));
+            } catch(e) {
+                document.getElementById('authError').textContent = e.message;
+                document.getElementById('authError').classList.remove('hidden');
             }
-        }
-        
-        async function handleLogout() {
-            try {
-                await auth.signOut();
-            } catch (error) {
-                showError('appError', 'Erro ao sair: ' + error.message);
-            }
-        }
-        
-        // ===== SEARCH FUNCTIONS =====
-        function handleSearchKeyPress(event) {
-            if (event.key === 'Enter') {
-                handleSearch();
-            }
-        }
-        
-        async function handleSearch() {
-            const query = document.getElementById('searchInput').value.trim();
+        });
+
+        // Logout
+        document.getElementById('btnLogout').addEventListener('click', () => auth.signOut());
+
+        // Views
+        document.getElementById('btnMyList').addEventListener('click', () => {
+            document.getElementById('searchView').classList.add('hidden');
+            document.getElementById('myListView').classList.remove('hidden');
+            document.getElementById('btnMyList').classList.add('active');
+            document.getElementById('btnSearch').classList.remove('active');
+            loadMyList();
+        });
+
+        document.getElementById('btnSearch').addEventListener('click', () => {
+            document.getElementById('searchView').classList.remove('hidden');
+            document.getElementById('myListView').classList.add('hidden');
+            document.getElementById('btnSearch').classList.add('active');
+            document.getElementById('btnMyList').classList.remove('active');
+            // Mostrar estado inicial
+            document.getElementById('emptySearch').classList.remove('hidden');
+            document.getElementById('searchResults').innerHTML = '';
+            document.getElementById('searchInput').focus();
+        });
+
+        // Toast notification function
+        function showToast(message, type = 'error') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
             
-            if (!query) {
-                showError('appError', 'Digite algo para buscar');
+            const icon = type === 'error' ? 'fa-exclamation-circle' : 
+                        type === 'success' ? 'fa-check-circle' : 'fa-info-circle';
+            
+            toast.innerHTML = `
+                <i class="fas ${icon}"></i>
+                <span>${message}</span>
+            `;
+            
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.classList.add('hiding');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // Search with debounce and real-time filtering
+        let searchTimeout;
+        let lastQuery = '';
+        
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            const query = e.target.value.trim();
+            
+            // Limpar timeout anterior
+            clearTimeout(searchTimeout);
+            
+            // Esconder resultados se vazio
+            if (query === '') {
+                document.getElementById('searchResults').innerHTML = '';
+                document.getElementById('emptySearch').classList.remove('hidden');
+                document.getElementById('searchLoading').classList.add('hidden');
+                document.getElementById('searchInfo').innerHTML = '<i class="fas fa-lightbulb"></i> Digite pelo menos 3 caracteres para buscar';
                 return;
             }
             
-            const searchLoading = document.getElementById('searchLoading');
-            const searchResults = document.getElementById('searchResults');
+            // Validar mínimo de 3 caracteres
+            if (query.length < 3) {
+                document.getElementById('searchResults').innerHTML = '';
+                document.getElementById('emptySearch').classList.add('hidden');
+                document.getElementById('searchLoading').classList.add('hidden');
+                document.getElementById('searchInfo').innerHTML = `<i class="fas fa-keyboard"></i> Digite mais ${3 - query.length} caractere(s)...`;
+                return;
+            }
             
-            searchLoading.classList.remove('hidden');
-            searchResults.innerHTML = '';
-            hideError('appError');
+            // Mostrar que está pronto para buscar
+            document.getElementById('searchInfo').innerHTML = '<i class="fas fa-search"></i> Buscando...';
+            
+            // Debounce de 500ms
+            searchTimeout = setTimeout(() => {
+                performSearch(query);
+            }, 500);
+        });
+
+        // Enter key to search immediately
+        document.getElementById('searchInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                clearTimeout(searchTimeout);
+                const query = e.target.value.trim();
+                if (query.length >= 3) {
+                    performSearch(query);
+                } else {
+                    showToast('A pesquisa deve ter no mínimo 3 caracteres', 'error');
+                }
+            }
+        });
+
+        // Perform search
+        async function performSearch(query) {
+            if (query === lastQuery) return; // Evitar busca duplicada
+            lastQuery = query;
+            
+            const loading = document.getElementById('searchLoading');
+            const results = document.getElementById('searchResults');
+            const empty = document.getElementById('emptySearch');
+            const info = document.getElementById('searchInfo');
+            
+            loading.classList.remove('hidden');
+            results.innerHTML = '';
+            empty.classList.add('hidden');
             
             try {
                 const response = await fetch(`https://www.omdbapi.com/?apikey=${OMDB_API_KEY}&s=${encodeURIComponent(query)}`);
                 const data = await response.json();
                 
-                searchLoading.classList.add('hidden');
+                loading.classList.add('hidden');
                 
                 if (data.Response === 'True') {
+                    info.innerHTML = `<i class="fas fa-check-circle"></i> Encontrados ${data.totalResults} resultado(s)`;
                     displaySearchResults(data.Search);
                 } else {
-                    showError('appError', 'Nenhum resultado encontrado');
+                    info.innerHTML = '<i class="fas fa-times-circle"></i> Nenhum resultado encontrado';
+                    results.innerHTML = `
+                        <div class="empty-search" style="grid-column: 1/-1;">
+                            <i class="fas fa-search"></i>
+                            <h3>Nenhum resultado</h3>
+                            <p>Não encontramos nada para "${query}"</p>
+                            <p style="margin-top: 10px; font-size: 0.9rem;">Tente:</p>
+                            <ul style="list-style: none; padding: 0; color: #9ca3af; font-size: 0.9rem;">
+                                <li>• Verificar a ortografia</li>
+                                <li>• Usar termos mais genéricos</li>
+                                <li>• Pesquisar em inglês</li>
+                            </ul>
+                        </div>
+                    `;
                 }
             } catch (error) {
-                searchLoading.classList.add('hidden');
-                showError('appError', 'Erro ao buscar: ' + error.message);
+                loading.classList.add('hidden');
+                info.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Erro ao buscar';
+                showToast('Erro ao buscar: ' + error.message, 'error');
             }
         }
-        
-        function displaySearchResults(results) {
-            const container = document.getElementById('searchResults');
-            container.innerHTML = '';
+
+        // Display search results
+        function displaySearchResults(items) {
+            const results = document.getElementById('searchResults');
+            results.innerHTML = '';
             
-            results.forEach(media => {
+            items.forEach((media, index) => {
                 const card = document.createElement('div');
                 card.className = 'media-card fade-in';
+                card.style.animationDelay = `${index * 0.05}s`;
+                
+                const typeLabel = media.Type === 'movie' ? 'Filme' : 
+                                 media.Type === 'series' ? 'Série' : 
+                                 media.Type;
+                
                 card.innerHTML = `
-                    <img src="${media.Poster !== 'N/A' ? media.Poster : 'https://via.placeholder.com/300x450?text=No+Image'}" alt="${media.Title}">
+                    <img 
+                        src="${media.Poster !== 'N/A' ? media.Poster : 'https://via.placeholder.com/300x450/1f2937/9ca3af?text=Sem+Imagem'}" 
+                        alt="${media.Title}"
+                        onerror="this.src='https://via.placeholder.com/300x450/1f2937/9ca3af?text=Sem+Imagem'"
+                    >
                     <div class="media-card-body">
                         <div class="media-card-title" title="${media.Title}">${media.Title}</div>
-                        <div class="media-card-year">${media.Year} • ${media.Type}</div>
-                        <button class="btn-add" onclick='addToList(${JSON.stringify(media)})'>
-                            <i class="fas fa-plus"></i> Adicionar
+                        <div class="media-card-meta">
+                            <span class="media-card-year">${media.Year}</span>
+                            <span class="media-card-type">${typeLabel}</span>
+                        </div>
+                        <button class="btn-add" onclick="addItemFromSearch('${media.imdbID}','${media.Title.replace(/'/g, "\\'")}','${media.Year}','${media.Poster}','${media.Type}')">
+                            <i class="fas fa-plus"></i> Adicionar à Lista
                         </button>
                     </div>
                 `;
-                container.appendChild(card);
+                
+                results.appendChild(card);
             });
         }
-        
-        // ===== LIST FUNCTIONS =====
-        async function addToList(media) {
+
+        // Add item from search
+        window.addItemFromSearch = async (imdbID, title, year, poster, type) => {
             try {
+                // Verificar se já existe na lista
+                const existing = await db.collection('watchlist')
+                    .where('userId', '==', currentUser.uid)
+                    .where('imdbID', '==', imdbID)
+                    .get();
+                
+                if (!existing.empty) {
+                    showToast('Este item já está na sua lista!', 'error');
+                    return;
+                }
+                
                 await db.collection('watchlist').add({
                     userId: currentUser.uid,
-                    imdbID: media.imdbID,
-                    title: media.Title,
-                    year: media.Year,
-                    poster: media.Poster,
-                    type: media.Type,
+                    imdbID, 
+                    title, 
+                    year, 
+                    poster, 
+                    type,
                     currentEpisode: 1,
                     currentSeason: 1,
                     currentTime: 0,
                     addedAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
                 
-                showView('mylist');
-                showError('appError', `${media.Title} adicionado à sua lista!`, 'success');
-                setTimeout(() => hideError('appError'), 3000);
-            } catch (error) {
-                showError('appError', 'Erro ao adicionar: ' + error.message);
+                showToast(`"${title}" adicionado à sua lista!`, 'success');
+                
+                // Animar o card
+                event.target.innerHTML = '<i class="fas fa-check"></i> Adicionado!';
+                event.target.style.background = '#10b981';
+                event.target.disabled = true;
+                
+            } catch(error) {
+                showToast('Erro ao adicionar: ' + error.message, 'error');
             }
-        }
-        
+        };
+
+        // Remove old search button listener
+        document.getElementById('btnSearchGo')?.remove();
+
+        // Load list
         async function loadMyList() {
-            const listLoading = document.getElementById('listLoading');
-            const myListContent = document.getElementById('myListContent');
-            
-            listLoading.classList.remove('hidden');
-            myListContent.innerHTML = '';
-            
-            try {
-                const snapshot = await db.collection('watchlist')
-                    .where('userId', '==', currentUser.uid)
-                    .orderBy('addedAt', 'desc')
-                    .get();
-                
-                listLoading.classList.add('hidden');
-                
-                if (snapshot.empty) {
-                    myListContent.innerHTML = `
-                        <div class="empty-state">
-                            <i class="fas fa-film"></i>
-                            <h3>Sua lista está vazia</h3>
-                            <p class="text-muted">Adicione filmes e séries para começar a acompanhar</p>
-                            <button class="btn btn-primary mt-3" onclick="showView('search')">
-                                <i class="fas fa-search"></i> Buscar Conteúdo
-                            </button>
+            const snapshot = await db.collection('watchlist').where('userId','==',currentUser.uid).get();
+            const content = document.getElementById('myListContent');
+            content.innerHTML = '';
+            if(snapshot.empty) {
+                content.innerHTML = '<p>Lista vazia</p>';
+                return;
+            }
+            snapshot.forEach(doc => {
+                const d = doc.data();
+                content.innerHTML += `
+                    <div class="list-item">
+                        <img src="${d.poster !== 'N/A' ? d.poster : 'https://via.placeholder.com/120x180'}">
+                        <div>
+                            <h4>${d.title}</h4>
+                            <p>${d.year} • ${d.type}</p>
+                            ${d.type === 'series' ? `
+                                <label>Temp: <input type="number" value="${d.currentSeason}" onchange="update('${doc.id}','currentSeason',this.value)"></label>
+                                <label>Ep: <input type="number" value="${d.currentEpisode}" onchange="update('${doc.id}','currentEpisode',this.value)"></label>
+                            ` : `
+                                <label>Min: <input type="number" value="${d.currentTime}" onchange="update('${doc.id}','currentTime',this.value)"></label>
+                            `}
+                            <button class="btn-remove mt-2" onclick="remove('${doc.id}')">Remover</button>
                         </div>
-                    `;
-                    return;
-                }
-                
-                snapshot.forEach(doc => {
-                    const item = doc.data();
-                    displayListItem(doc.id, item);
-                });
-            } catch (error) {
-                listLoading.classList.add('hidden');
-                showError('appError', 'Erro ao carregar lista: ' + error.message);
-            }
-        }
-        
-        function displayListItem(id, item) {
-            const container = document.getElementById('myListContent');
-            const itemDiv = document.createElement('div');
-            itemDiv.className = 'list-item fade-in';
-            
-            const progressHTML = item.type === 'series' ? `
-                <div class="progress-controls">
-                    <div class="progress-group">
-                        <label>Temporada</label>
-                        <input type="number" min="1" value="${item.currentSeason}" 
-                               onchange="updateProgress('${id}', 'currentSeason', this.value)">
                     </div>
-                    <div class="progress-group">
-                        <label>Episódio</label>
-                        <input type="number" min="1" value="${item.currentEpisode}" 
-                               onchange="updateProgress('${id}', 'currentEpisode', this.value)">
-                    </div>
-                </div>
-            ` : `
-                <div class="progress-controls">
-                    <div class="progress-group">
-                        <label>Minutos assistidos</label>
-                        <input type="number" min="0" value="${item.currentTime}" 
-                               onchange="updateProgress('${id}', 'currentTime', this.value)">
-                    </div>
-                </div>
-            `;
-            
-            itemDiv.innerHTML = `
-                <img src="${item.poster !== 'N/A' ? item.poster : 'https://via.placeholder.com/120x180?text=No+Image'}" alt="${item.title}">
-                <div class="list-item-content">
-                    <div class="list-item-title">${item.title}</div>
-                    <div class="list-item-meta">${item.year} • ${item.type === 'series' ? 'Série' : 'Filme'}</div>
-                    ${progressHTML}
-                    <button class="btn-remove" onclick="removeFromList('${id}')">
-                        <i class="fas fa-trash"></i> Remover
-                    </button>
-                </div>
-            `;
-            
-            container.appendChild(itemDiv);
+                `;
+            });
         }
-        
-        async function updateProgress(id, field, value) {
-            try {
-                await db.collection('watchlist').doc(id).update({
-                    [field]: parseInt(value)
-                });
-            } catch (error) {
-                showError('appError', 'Erro ao atualizar: ' + error.message);
-            }
-        }
-        
-        async function removeFromList(id) {
-            if (!confirm('Deseja realmente remover este item?')) return;
-            
-            try {
+
+        window.update = (id, field, value) => {
+            db.collection('watchlist').doc(id).update({[field]: parseInt(value)});
+        };
+
+        window.remove = async (id) => {
+            if(confirm('Remover?')) {
                 await db.collection('watchlist').doc(id).delete();
                 loadMyList();
-            } catch (error) {
-                showError('appError', 'Erro ao remover: ' + error.message);
             }
-        }
-        
-        // ===== VIEW FUNCTIONS =====
-        function showView(view) {
-            currentView = view;
-            const searchView = document.getElementById('searchView');
-            const myListView = document.getElementById('myListView');
-            const btnMyList = document.getElementById('btnMyList');
-            const btnSearch = document.getElementById('btnSearch');
-            
-            hideError('appError');
-            
-            if (view === 'search') {
-                searchView.classList.remove('hidden');
-                myListView.classList.add('hidden');
-                btnSearch.classList.add('active');
-                btnMyList.classList.remove('active');
-            } else {
-                searchView.classList.add('hidden');
-                myListView.classList.remove('hidden');
-                btnMyList.classList.add('active');
-                btnSearch.classList.remove('active');
-                loadMyList();
-            }
-        }
-        
-        // ===== UTILITY FUNCTIONS =====
-        function showError(elementId, message, type = 'danger') {
-            const element = document.getElementById(elementId);
-            element.textContent = message;
-            element.className = `alert alert-${type}`;
-            element.classList.remove('hidden');
-        }
-        
-        function hideError(elementId) {
-            const element = document.getElementById(elementId);
-            element.classList.add('hidden');
-        }
-        
-        function getErrorMessage(errorCode) {
-            const errors = {
-                'auth/email-already-in-use': 'Este email já está em uso',
-                'auth/invalid-email': 'Email inválido',
-                'auth/weak-password': 'Senha muito fraca',
-                'auth/user-not-found': 'Usuário não encontrado',
-                'auth/wrong-password': 'Senha incorreta',
-                'auth/too-many-requests': 'Muitas tentativas. Tente novamente mais tarde'
-            };
-            return errors[errorCode] || 'Erro ao processar requisição';
-        }
-        
-        // ===== AUTH STATE OBSERVER =
+        };
+    </script>
+</body>
+</html>
