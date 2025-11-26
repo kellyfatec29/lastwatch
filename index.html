@@ -99,7 +99,45 @@
             transform: translateY(-2px);
             box-shadow: 0 8px 20px rgba(124, 58, 237, 0.4);
         }
-        .btn-add:active { transform: translateY(0); }
+        .btn-load-more {
+            display: block;
+            margin: 40px auto;
+            padding: 16px 40px;
+            background: linear-gradient(135deg, #7c3aed, #ec4899);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
+        }
+        .btn-load-more:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(124, 58, 237, 0.5);
+        }
+        .btn-load-more:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .btn-load-more i {
+            margin-right: 8px;
+        }
+        .results-counter {
+            text-align: center;
+            color: #9ca3af;
+            font-size: 0.9rem;
+            margin-top: 20px;
+            padding: 12px;
+            background: rgba(31, 41, 55, 0.5);
+            border-radius: 8px;
+        }
+        .results-counter strong {
+            color: #7c3aed;
+            font-weight: 700;
+        }
         .empty-search { 
             text-align: center; 
             padding: 80px 20px; 
@@ -237,6 +275,10 @@
                         <p style="color: #9ca3af;">Buscando filmes e séries...</p>
                     </div>
                     <div id="searchResults" class="media-grid"></div>
+                    <button id="btnLoadMore" class="btn-load-more hidden">
+                        <i class="fas fa-arrow-down"></i> Ver Mais Resultados
+                    </button>
+                    <div id="resultsCounter" class="results-counter hidden"></div>
                     <div id="emptySearch" class="empty-search hidden">
                         <i class="fas fa-film"></i>
                         <h3>Comece a pesquisar</h3>
@@ -370,6 +412,9 @@
         // Search with debounce and real-time filtering
         let searchTimeout;
         let lastQuery = '';
+        let currentPage = 1;
+        let totalResults = 0;
+        let loadedResults = 0;
         
         document.getElementById('searchInput').addEventListener('input', (e) => {
             const query = e.target.value.trim();
@@ -382,6 +427,8 @@
                 document.getElementById('searchResults').innerHTML = '';
                 document.getElementById('emptySearch').classList.remove('hidden');
                 document.getElementById('searchLoading').classList.add('hidden');
+                document.getElementById('btnLoadMore').classList.add('hidden');
+                document.getElementById('resultsCounter').classList.add('hidden');
                 document.getElementById('searchInfo').innerHTML = '<i class="fas fa-lightbulb"></i> Digite pelo menos 3 caracteres para buscar';
                 return;
             }
@@ -391,6 +438,8 @@
                 document.getElementById('searchResults').innerHTML = '';
                 document.getElementById('emptySearch').classList.add('hidden');
                 document.getElementById('searchLoading').classList.add('hidden');
+                document.getElementById('btnLoadMore').classList.add('hidden');
+                document.getElementById('resultsCounter').classList.add('hidden');
                 document.getElementById('searchInfo').innerHTML = `<i class="fas fa-keyboard"></i> Digite mais ${3 - query.length} caractere(s)...`;
                 return;
             }
@@ -398,9 +447,14 @@
             // Mostrar que está pronto para buscar
             document.getElementById('searchInfo').innerHTML = '<i class="fas fa-search"></i> Buscando...';
             
+            // Resetar paginação quando query mudar
+            currentPage = 1;
+            totalResults = 0;
+            loadedResults = 0;
+            
             // Debounce de 500ms
             searchTimeout = setTimeout(() => {
-                performSearch(query);
+                performSearch(query, 1, true);
             }, 500);
         });
 
@@ -410,63 +464,125 @@
                 clearTimeout(searchTimeout);
                 const query = e.target.value.trim();
                 if (query.length >= 3) {
-                    performSearch(query);
+                    currentPage = 1;
+                    totalResults = 0;
+                    loadedResults = 0;
+                    performSearch(query, 1, true);
                 } else {
                     showToast('A pesquisa deve ter no mínimo 3 caracteres', 'error');
                 }
             }
         });
 
+        // Load More button
+        document.getElementById('btnLoadMore').addEventListener('click', () => {
+            const query = document.getElementById('searchInput').value.trim();
+            currentPage++;
+            performSearch(query, currentPage, false);
+        });
+
         // Perform search
-        async function performSearch(query) {
-            if (query === lastQuery) return; // Evitar busca duplicada
-            lastQuery = query;
+        async function performSearch(query, page = 1, clearResults = true) {
+            if (query !== lastQuery) {
+                lastQuery = query;
+                currentPage = 1;
+                page = 1;
+                clearResults = true;
+            }
             
             const loading = document.getElementById('searchLoading');
             const results = document.getElementById('searchResults');
             const empty = document.getElementById('emptySearch');
             const info = document.getElementById('searchInfo');
+            const btnLoadMore = document.getElementById('btnLoadMore');
+            const counter = document.getElementById('resultsCounter');
             
-            loading.classList.remove('hidden');
-            results.innerHTML = '';
+            // Mostrar loading
+            if (clearResults) {
+                loading.classList.remove('hidden');
+                results.innerHTML = '';
+                btnLoadMore.classList.add('hidden');
+                counter.classList.add('hidden');
+            } else {
+                btnLoadMore.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Carregando...';
+                btnLoadMore.disabled = true;
+            }
+            
             empty.classList.add('hidden');
             
             try {
-                const response = await fetch(`https://www.omdbapi.com/?apikey=${OMDB_API_KEY}&s=${encodeURIComponent(query)}`);
+                const response = await fetch(`https://www.omdbapi.com/?apikey=${OMDB_API_KEY}&s=${encodeURIComponent(query)}&page=${page}`);
                 const data = await response.json();
                 
                 loading.classList.add('hidden');
+                btnLoadMore.disabled = false;
+                btnLoadMore.innerHTML = '<i class="fas fa-arrow-down"></i> Ver Mais Resultados';
                 
                 if (data.Response === 'True') {
-                    info.innerHTML = `<i class="fas fa-check-circle"></i> Encontrados ${data.totalResults} resultado(s)`;
-                    displaySearchResults(data.Search);
+                    totalResults = parseInt(data.totalResults);
+                    
+                    if (clearResults) {
+                        loadedResults = 0;
+                    }
+                    
+                    loadedResults += data.Search.length;
+                    
+                    // Atualizar info
+                    info.innerHTML = `<i class="fas fa-check-circle"></i> Encontrados ${totalResults} resultado(s)`;
+                    
+                    // Exibir resultados
+                    displaySearchResults(data.Search, clearResults);
+                    
+                    // Mostrar/esconder botão "Ver Mais"
+                    if (loadedResults < totalResults) {
+                        btnLoadMore.classList.remove('hidden');
+                        counter.classList.remove('hidden');
+                        counter.innerHTML = `Mostrando <strong>${loadedResults}</strong> de <strong>${totalResults}</strong> resultados`;
+                    } else {
+                        btnLoadMore.classList.add('hidden');
+                        counter.classList.remove('hidden');
+                        counter.innerHTML = `✅ Todos os <strong>${totalResults}</strong> resultados foram carregados`;
+                    }
+                    
                 } else {
                     info.innerHTML = '<i class="fas fa-times-circle"></i> Nenhum resultado encontrado';
-                    results.innerHTML = `
-                        <div class="empty-search" style="grid-column: 1/-1;">
-                            <i class="fas fa-search"></i>
-                            <h3>Nenhum resultado</h3>
-                            <p>Não encontramos nada para "${query}"</p>
-                            <p style="margin-top: 10px; font-size: 0.9rem;">Tente:</p>
-                            <ul style="list-style: none; padding: 0; color: #9ca3af; font-size: 0.9rem;">
-                                <li>• Verificar a ortografia</li>
-                                <li>• Usar termos mais genéricos</li>
-                                <li>• Pesquisar em inglês</li>
-                            </ul>
-                        </div>
-                    `;
+                    btnLoadMore.classList.add('hidden');
+                    counter.classList.add('hidden');
+                    
+                    if (clearResults) {
+                        results.innerHTML = `
+                            <div class="empty-search" style="grid-column: 1/-1;">
+                                <i class="fas fa-search"></i>
+                                <h3>Nenhum resultado</h3>
+                                <p>Não encontramos nada para "${query}"</p>
+                                <p style="margin-top: 10px; font-size: 0.9rem;">Tente:</p>
+                                <ul style="list-style: none; padding: 0; color: #9ca3af; font-size: 0.9rem;">
+                                    <li>• Verificar a ortografia</li>
+                                    <li>• Usar termos mais genéricos</li>
+                                    <li>• Pesquisar em inglês</li>
+                                </ul>
+                            </div>
+                        `;
+                    }
                 }
             } catch (error) {
                 loading.classList.add('hidden');
+                btnLoadMore.disabled = false;
+                btnLoadMore.innerHTML = '<i class="fas fa-arrow-down"></i> Ver Mais Resultados';
                 info.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Erro ao buscar';
                 showToast('Erro ao buscar: ' + error.message, 'error');
             }
         }
 
         // Display search results
-        function displaySearchResults(items) {
+        function displaySearchResults(items, clearResults = true) {
             const results = document.getElementById('searchResults');
-            results.innerHTML = '';
+            
+            if (clearResults) {
+                results.innerHTML = '';
+            }
+            
+            const startIndex = results.children.length;
             
             items.forEach((media, index) => {
                 const card = document.createElement('div');
@@ -497,6 +613,16 @@
                 
                 results.appendChild(card);
             });
+            
+            // Scroll suave para os novos resultados (apenas quando carrega mais)
+            if (!clearResults && items.length > 0) {
+                setTimeout(() => {
+                    const firstNewCard = results.children[startIndex];
+                    if (firstNewCard) {
+                        firstNewCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                }, 100);
+            }
         }
 
         // Add item from search
