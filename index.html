@@ -23,13 +23,18 @@
 
         /* SEARCH GRID */
         .search-container { padding: 30px 0; }
-        .search-input { border-radius: 16px; }
+        /* CORREÇÃO CSS: Garantindo que o input e o ícone fiquem centralizados */
+        .search-box { position: relative; margin-bottom: 40px; max-width: 600px; margin-left: auto; margin-right: auto;}
+        .search-input { border-radius: 16px; width: 100%; padding-right: 50px !important; }
+        .search-icon { position: absolute; right: 24px; top: 50%; transform: translateY(-50%); color: #6b7280; font-size: 1.2rem; pointer-events: none; }
+        .search-info { text-align: center; color: #9ca3af; margin-bottom: 30px; font-size: 0.95rem; }
         .media-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 20px; }
         .media-card { background: #1f2937; border-radius: 16px; overflow: hidden; transition: all 0.3s ease; cursor: pointer; border: 2px solid transparent; position: relative; }
         .media-card:hover { transform: translateY(-8px) scale(1.02); box-shadow: 0 20px 40px rgba(124, 58, 237, 0.3); border-color: #7c3aed; }
-        /* CORREÇÃO CSS: Unificando a altura das imagens do card principal */
         .media-card img { width: 100%; height: 270px; object-fit: cover; transition: transform 0.3s; }
         .media-card:hover img { transform: scale(1.05); }
+        .empty-search { text-align: center; padding: 80px 20px; color: #6b7280; }
+        .empty-search i { font-size: 5rem; color: #374151; margin-bottom: 20px; opacity: 0.5; }
 
         /* MODAL DETAILS */
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.9); backdrop-filter: blur(5px); z-index: 10000; display: none; align-items: center; justify-content: center; padding: 20px; overflow-y: auto; }
@@ -842,7 +847,7 @@
                                     const mediaTitle = t.title || t.name;
                                     
                                     return `
-                                        <div class="similar-item" onclick="performSearchAndOpenModal('${mediaTitle}')">
+                                        <div class="similar-item" onclick="performSearchAndOpenModal('${mediaTitle.replace(/'/g, "\\'")}')">
                                             <img src="${posterSrc}" alt="${mediaTitle} Poster" onerror="this.src='${TMDB_FALLBACK_POSTER}'">
                                             <div class="similar-item-title" title="${mediaTitle}">${mediaTitle}</div>
                                         </div>
