@@ -753,8 +753,26 @@
         }
         
         window.performSearchAndOpenModal = async (title) => {
-            closeModal();
-            showToast(`Buscando detalhes para "${title}"...`, 'info');
+            // FIX: NÃO fecha o modal, apenas mostra loading dentro dele para transição suave
+            const modalBody = document.getElementById('modalBody');
+            if(modalBody) {
+                modalBody.innerHTML = `
+                    <div class="modal-loading">
+                        <div class="spinner"></div>
+                        <p style="color: #9ca3af;">Buscando detalhes para "${title}"...</p>
+                    </div>
+                `;
+            } else {
+                // Se o modal não estiver aberto por algum motivo, abre vazio com loading
+                const modal = document.getElementById('modalDetails');
+                modal.classList.add('active');
+                document.getElementById('modalBody').innerHTML = `
+                    <div class="modal-loading">
+                        <div class="spinner"></div>
+                        <p style="color: #9ca3af;">Carregando...</p>
+                    </div>
+                `;
+            }
             
             try {
                 // Ao invés de buscar por título (que pode falhar), usaremos a busca do OMDB
@@ -766,9 +784,12 @@
                     openDetailsModal(firstMatch.imdbID);
                 } else {
                     showToast(`Detalhes não encontrados para "${title}" no OMDB.`, 'error');
+                    // Se falhar, fecha o modal para não ficar travado no loading
+                    closeModal();
                 }
             } catch (e) {
                 showToast(`Erro ao buscar detalhes de "${title}".`, 'error');
+                closeModal();
             }
         }
 
