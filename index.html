@@ -466,9 +466,40 @@
             to { transform: translateX(400px); opacity: 0; }
         }
         .toast.hiding { animation: slideOut 0.3s ease-out; }
-        .list-item { background: #1f2937; border-radius: 15px; padding: 20px; margin-bottom: 20px; display: flex; gap: 20px; }
+        .list-item { 
+            background: #1f2937; 
+            border-radius: 15px; 
+            padding: 20px; 
+            margin-bottom: 20px; 
+            display: flex; 
+            gap: 20px; 
+            align-items: center; /* Alinhamento central para a lista */
+        }
         .list-item img { width: 120px; height: 180px; border-radius: 10px; object-fit: cover; }
-        .btn-remove { background: #dc2626; border: none; padding: 10px 20px; color: white; cursor: pointer; }
+        .list-item div { flex-grow: 1; } /* Conteúdo flexível */
+        .list-item h4 { font-weight: 700; margin-bottom: 5px; }
+        .list-item p { color: #9ca3af; font-size: 0.9rem; margin-bottom: 15px; }
+        .list-item label { margin-right: 15px; color: #d1d5db; font-weight: 600; font-size: 0.9rem; }
+        .list-item input[type="number"] {
+            background: #0a0f1a;
+            border: 1px solid #374151;
+            color: white;
+            width: 50px;
+            padding: 5px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .btn-remove { 
+            background: #dc2626; 
+            border: none; 
+            padding: 10px 20px; 
+            color: white; 
+            cursor: pointer; 
+            border-radius: 8px;
+            transition: background 0.2s;
+            font-weight: 600;
+        }
+        .btn-remove:hover { background: #b91c1c; }
         .hidden { display: none !important; }
     </style>
 </head>
@@ -545,10 +576,8 @@
         </div>
     </div>
 
-    <!-- Toast Container -->
     <div class="toast-container" id="toastContainer"></div>
 
-    <!-- Modal de Detalhes -->
     <div class="modal-overlay" id="modalDetails">
         <div class="modal-content">
             <button class="modal-close" onclick="closeModal()">
@@ -563,6 +592,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-firestore-compat.min.js"></script>
     
     <script>
+        // --- CONFIGURAÇÕES E INICIALIZAÇÃO ---
         const firebaseConfig = {
             apiKey: "AIzaSyD57nzPfUhJAFn0haIGANSWTKODgeQ0nLA",
             authDomain: "lastwatch-e2c32.firebaseapp.com",
@@ -577,6 +607,32 @@
         const auth = firebase.auth();
         const db = firebase.firestore();
         let currentUser = null;
+
+        // --- FUNÇÕES GLOBAIS DE UTILIDADE ---
+
+        // Toast notification function
+        function showToast(message, type = 'error') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            
+            const icon = type === 'error' ? 'fa-exclamation-circle' : 
+                         type === 'success' ? 'fa-check-circle' : 'fa-info-circle';
+            
+            toast.innerHTML = `
+                <i class="fas ${icon}"></i>
+                <span>${message}</span>
+            `;
+            
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.classList.add('hiding');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // --- FIREBASE / AUTENTICAÇÃO ---
 
         // Auth state
         auth.onAuthStateChanged(user => {
@@ -629,7 +685,8 @@
         // Logout
         document.getElementById('btnLogout').addEventListener('click', () => auth.signOut());
 
-        // Views
+        // --- NAVEGAÇÃO / VIEWS ---
+
         document.getElementById('btnMyList').addEventListener('click', () => {
             document.getElementById('searchView').classList.add('hidden');
             document.getElementById('myListView').classList.remove('hidden');
@@ -649,29 +706,8 @@
             document.getElementById('searchInput').focus();
         });
 
-        // Toast notification function
-        function showToast(message, type = 'error') {
-            const container = document.getElementById('toastContainer');
-            const toast = document.createElement('div');
-            toast.className = `toast ${type}`;
-            
-            const icon = type === 'error' ? 'fa-exclamation-circle' : 
-                        type === 'success' ? 'fa-check-circle' : 'fa-info-circle';
-            
-            toast.innerHTML = `
-                <i class="fas ${icon}"></i>
-                <span>${message}</span>
-            `;
-            
-            container.appendChild(toast);
-            
-            setTimeout(() => {
-                toast.classList.add('hiding');
-                setTimeout(() => toast.remove(), 300);
-            }, 3000);
-        }
+        // --- FUNÇÕES DE PESQUISA OMDB ---
 
-        // Search with debounce and real-time filtering
         let searchTimeout;
         let lastQuery = '';
         let currentPage = 1;
@@ -681,10 +717,8 @@
         document.getElementById('searchInput').addEventListener('input', (e) => {
             const query = e.target.value.trim();
             
-            // Limpar timeout anterior
             clearTimeout(searchTimeout);
             
-            // Esconder resultados se vazio
             if (query === '') {
                 document.getElementById('searchResults').innerHTML = '';
                 document.getElementById('emptySearch').classList.remove('hidden');
@@ -695,7 +729,6 @@
                 return;
             }
             
-            // Validar mínimo de 3 caracteres
             if (query.length < 3) {
                 document.getElementById('searchResults').innerHTML = '';
                 document.getElementById('emptySearch').classList.add('hidden');
@@ -706,15 +739,12 @@
                 return;
             }
             
-            // Mostrar que está pronto para buscar
             document.getElementById('searchInfo').innerHTML = '<i class="fas fa-search"></i> Buscando...';
             
-            // Resetar paginação quando query mudar
             currentPage = 1;
             totalResults = 0;
             loadedResults = 0;
             
-            // Debounce de 500ms
             searchTimeout = setTimeout(() => {
                 performSearch(query, 1, true);
             }, 500);
@@ -878,18 +908,20 @@
                 
                 results.appendChild(card);
                 
-                // Adicionar evento de click no card inteiro DEPOIS de adicionar ao DOM
+                // Adicionar evento de click no card inteiro
                 setTimeout(() => {
                     const addedCard = document.getElementById(cardId);
                     if (addedCard) {
+                        // Correção aqui: O código que chamava openDetailsModal agora funciona
                         addedCard.addEventListener('click', function(e) {
-                            console.log('Card clicado!', media.imdbID);
+                            
                             // Se clicou no botão, adicionar à lista
                             if (e.target.closest('.btn-add')) {
                                 e.stopPropagation();
-                                addItemFromSearch(media.imdbID, media.Title, media.Year, media.Poster, media.Type);
+                                addItemFromSearch(media.imdbID, media.Title, media.Year, media.Poster, media.Type, e);
                             } else {
                                 // Se clicou em qualquer outra parte, abrir detalhes
+                                // A função openDetailsModal AGORA está definida abaixo
                                 openDetailsModal(media.imdbID);
                             }
                         });
@@ -908,9 +940,16 @@
             }
         }
 
+        // --- FUNÇÕES DE LISTA DE ACOMPANHAMENTO (FIRESTORE) ---
+
         // Add item from search
-        window.addItemFromSearch = async (imdbID, title, year, poster, type) => {
+        window.addItemFromSearch = async (imdbID, title, year, poster, type, event) => {
             try {
+                if (!currentUser) {
+                    showToast('Você precisa estar logado para adicionar itens!', 'error');
+                    return;
+                }
+                
                 // Verificar se já existe na lista
                 const existing = await db.collection('watchlist')
                     .where('userId', '==', currentUser.uid)
@@ -919,6 +958,13 @@
                 
                 if (!existing.empty) {
                     showToast('Este item já está na sua lista!', 'error');
+                    
+                    // Restaurar botão se estiver sendo chamado do modal
+                    if (event && event.target.closest('.btn-add-modal')) {
+                        event.target.innerHTML = `<i class="fas fa-exclamation-circle"></i> Já Adicionado`;
+                        event.target.style.background = '#fbbf24';
+                        event.target.disabled = true;
+                    }
                     return;
                 }
                 
@@ -937,18 +983,21 @@
                 
                 showToast(`"${title}" adicionado à sua lista!`, 'success');
                 
-                // Animar o card
-                event.target.innerHTML = '<i class="fas fa-check"></i> Adicionado!';
-                event.target.style.background = '#10b981';
-                event.target.disabled = true;
+                // Animar o card ou botão
+                if (event && event.target.closest('.btn-add')) {
+                    event.target.innerHTML = '<i class="fas fa-check"></i> Adicionado!';
+                    event.target.style.background = '#10b981';
+                    event.target.disabled = true;
+                } else if (event && event.target.closest('.btn-add-modal')) {
+                    event.target.innerHTML = '<i class="fas fa-check"></i> Adicionado!';
+                    event.target.style.background = '#10b981';
+                    event.target.disabled = true;
+                }
                 
             } catch(error) {
                 showToast('Erro ao adicionar: ' + error.message, 'error');
             }
         };
-
-        // Remove old search button listener
-        document.getElementById('btnSearchGo')?.remove();
 
         // Load list
         async function loadMyList() {
@@ -956,24 +1005,24 @@
             const content = document.getElementById('myListContent');
             content.innerHTML = '';
             if(snapshot.empty) {
-                content.innerHTML = '<p>Lista vazia</p>';
+                content.innerHTML = '<p style="color: #9ca3af; text-align: center; padding: 40px 0;">Sua lista está vazia. Vá para "Pesquisar" para adicionar filmes e séries.</p>';
                 return;
             }
             snapshot.forEach(doc => {
                 const d = doc.data();
                 content.innerHTML += `
-                    <div class="list-item">
-                        <img src="${d.poster !== 'N/A' ? d.poster : 'https://via.placeholder.com/120x180'}">
+                    <div class="list-item" onclick="openDetailsModal('${d.imdbID}')" style="cursor:pointer;">
+                        <img src="${d.poster !== 'N/A' ? d.poster : 'https://via.placeholder.com/120x180/1f2937/9ca3af?text=Sem+Imagem'}" onerror="this.src='https://via.placeholder.com/120x180/1f2937/9ca3af?text=Sem+Imagem'">
                         <div>
                             <h4>${d.title}</h4>
                             <p>${d.year} • ${d.type}</p>
                             ${d.type === 'series' ? `
-                                <label>Temp: <input type="number" value="${d.currentSeason}" onchange="update('${doc.id}','currentSeason',this.value)"></label>
-                                <label>Ep: <input type="number" value="${d.currentEpisode}" onchange="update('${doc.id}','currentEpisode',this.value)"></label>
+                                <label>Temp: <input type="number" value="${d.currentSeason}" onchange="update('${doc.id}','currentSeason',this.value)" onclick="event.stopPropagation();"></label>
+                                <label>Ep: <input type="number" value="${d.currentEpisode}" onchange="update('${doc.id}','currentEpisode',this.value)" onclick="event.stopPropagation();"></label>
                             ` : `
-                                <label>Min: <input type="number" value="${d.currentTime}" onchange="update('${doc.id}','currentTime',this.value)"></label>
+                                <label>Min: <input type="number" value="${d.currentTime}" onchange="update('${doc.id}','currentTime',this.value)" onclick="event.stopPropagation();"></label>
                             `}
-                            <button class="btn-remove mt-2" onclick="remove('${doc.id}')">Remover</button>
+                            <button class="btn-remove mt-2" onclick="event.stopPropagation(); remove('${doc.id}')">Remover</button>
                         </div>
                     </div>
                 `;
@@ -981,15 +1030,143 @@
         }
 
         window.update = (id, field, value) => {
-            db.collection('watchlist').doc(id).update({[field]: parseInt(value)});
+            db.collection('watchlist').doc(id).update({[field]: parseInt(value) || 0}); // Garante que é um número
         };
 
         window.remove = async (id) => {
-            if(confirm('Remover?')) {
-                await db.collection('watchlist').doc(id).delete();
-                loadMyList();
+            if(confirm('Tem certeza que deseja remover este item da sua lista?')) {
+                try {
+                    await db.collection('watchlist').doc(id).delete();
+                    showToast('Item removido com sucesso!', 'success');
+                    loadMyList();
+                } catch(e) {
+                    showToast('Erro ao remover: ' + e.message, 'error');
+                }
             }
         };
+
+        // --- FUNÇÕES DO MODAL DE DETALHES (CORREÇÃO DO ERRO) ---
+        
+        // 1. Função para fechar o modal
+        window.closeModal = () => {
+            document.getElementById('modalDetails').classList.remove('active');
+            // Pequeno delay para a animação de saída terminar antes de limpar
+            setTimeout(() => {
+                document.getElementById('modalBody').innerHTML = ''; 
+            }, 300);
+        }
+
+        // 2. Função principal para abrir e carregar os detalhes do modal
+        window.openDetailsModal = async (imdbID) => {
+            const modal = document.getElementById('modalDetails');
+            const modalBody = document.getElementById('modalBody');
+            
+            // Mostrar o modal com loading
+            modal.classList.add('active');
+            modalBody.innerHTML = `
+                <div class="modal-loading">
+                    <div class="spinner"></div>
+                    <p style="color: #9ca3af;">Carregando detalhes...</p>
+                </div>
+            `;
+            
+            try {
+                // Buscar detalhes na API (usando i= para buscar por ID)
+                const response = await fetch(`https://www.omdbapi.com/?apikey=${OMDB_API_KEY}&i=${imdbID}&plot=full`);
+                const data = await response.json();
+                
+                if (data.Response === 'False') {
+                    modalBody.innerHTML = `<p class="text-danger p-5 text-center">Erro: ${data.Error || 'Detalhes não encontrados.'}</p>`;
+                    return;
+                }
+
+                // Gerar o HTML dos detalhes
+                const typeLabel = data.Type === 'movie' ? 'Filme' : data.Type === 'series' ? 'Série' : data.Type;
+                const rating = data.imdbRating !== 'N/A' ? `${data.imdbRating}/10` : 'S/I';
+                const yearText = data.Type === 'series' && data.Year.includes('–') ? data.Year : data.Year;
+                const safeTitle = data.Title.replace(/'/g, "\\'"); // Escapar aspas simples para onclick
+
+                modalBody.innerHTML = `
+                    <div 
+                        class="modal-header" 
+                        style="background-image: url('${data.Poster !== 'N/A' ? data.Poster : 'https://via.placeholder.com/900x400/1f2937/9ca3af?text=Sem+Imagem'}');"
+                    >
+                        <div class="modal-header-overlay">
+                            <img 
+                                src="${data.Poster !== 'N/A' ? data.Poster : 'https://via.placeholder.com/150x225/1f2937/9ca3af?text=Sem+Imagem'}" 
+                                alt="${data.Title}" 
+                                class="modal-poster"
+                                onerror="this.src='https://via.placeholder.com/150x225/1f2937/9ca3af?text=Sem+Imagem'"
+                            >
+                            <div class="modal-header-info">
+                                <h2 class="modal-title">${data.Title} (${yearText})</h2>
+                                <div class="modal-meta">
+                                    <span class="modal-badge">${typeLabel}</span>
+                                    <div class="modal-rating">
+                                        <i class="fas fa-star"></i> ${rating}
+                                    </div>
+                                    <span class="text-secondary">${data.Runtime !== 'N/A' ? data.Runtime : data.totalSeasons ? data.totalSeasons + ' Temporadas' : ''}</span>
+                                    <span class="text-secondary">${data.Genre}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-body">
+                        <button class="btn-add-modal" onclick="addItemFromSearch('${data.imdbID}', '${safeTitle}', '${data.Year}', '${data.Poster}', '${data.Type}', event)">
+                            <i class="fas fa-plus-circle"></i> Adicionar à Minha Lista
+                        </button>
+
+                        <h3 class="section-title"><i class="fas fa-book-open"></i> Sinopse</h3>
+                        <p class="synopsis">${data.Plot !== 'N/A' ? data.Plot : 'Sinopse não disponível.'}</p>
+                        
+                        <h3 class="section-title"><i class="fas fa-info-circle"></i> Detalhes Técnicos</h3>
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <div class="info-label">Diretor</div>
+                                <div class="info-value">${data.Director !== 'N/A' ? data.Director : 'S/I'}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Escritores</div>
+                                <div class="info-value">${data.Writer !== 'N/A' ? data.Writer : 'S/I'}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Atores Principais</div>
+                                <div class="info-value">${data.Actors !== 'N/A' ? data.Actors : 'S/I'}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">País / Idioma</div>
+                                <div class="info-value">${data.Country !== 'N/A' ? data.Country : 'S/I'} / ${data.Language !== 'N/A' ? data.Language : 'S/I'}</div>
+                            </div>
+                        </div>
+
+                        ${data.Ratings && data.Ratings.length > 0 ? `
+                            <h3 class="section-title"><i class="fas fa-poll"></i> Avaliações</h3>
+                            <div class="info-grid">
+                                ${data.Ratings.map(r => `
+                                    <div class="info-item">
+                                        <div class="info-label">${r.Source}</div>
+                                        <div class="info-value">${r.Value}</div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        ` : ''}
+                        
+                        ${data.totalSeasons ? `
+                            <h3 class="section-title"><i class="fas fa-tv"></i> Temporadas</h3>
+                            <div class="info-item">
+                                <div class="info-label">Total de Temporadas</div>
+                                <div class="info-value">${data.totalSeasons}</div>
+                            </div>
+                            <p class="text-secondary mt-3">Para acompanhar o progresso, use a seção "Minha Lista".</p>
+                        ` : ''}
+                    </div>
+                `;
+
+            } catch (error) {
+                modalBody.innerHTML = `<p class="text-danger p-5 text-center">Erro ao carregar detalhes: ${error.message}</p>`;
+                showToast('Erro ao carregar detalhes: ' + error.message, 'error');
+            }
+        }
     </script>
 </body>
 </html>
