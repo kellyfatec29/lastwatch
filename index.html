@@ -106,7 +106,7 @@
         /* Estilo específico para Selos */
         .media-card-type.musical { background: linear-gradient(135deg, #ec4899, #f43f5e); }
         .media-card-type.play { background: linear-gradient(135deg, #8b5cf6, #d946ef); }
-        .media-card-type.game { background: linear-gradient(135deg, #10b981, #059669); } 
+        /* REMOVIDO ESTILO DE GAME */
         .media-card-type.doc { background: linear-gradient(135deg, #6b7280, #4b5563); } 
 
         .btn-add { 
@@ -507,46 +507,173 @@
         }
 
         #franchiseView {
+            display: flex;
+            flex-direction: column; /* Mobile first column layout */
             padding: 20px 0;
         }
         
-        .franchise-controls {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
-            gap: 15px;
-            background: transparent; 
-            border: none;
-            padding: 0;
+        /* Layout Grid para Desktop (Sidebar + Content) */
+        .franchise-container {
+            display: grid;
+            grid-template-columns: 1fr; /* Mobile padrão */
+            gap: 20px;
+        }
+        @media (min-width: 992px) {
+            .franchise-container {
+                grid-template-columns: 280px 1fr; /* Sidebar de 280px */
+            }
+        }
+
+        /* ESTILO DO PAINEL DE FILTROS (ATUALIZADO PARA TAGS) */
+        .filter-panel {
+            background: #111827;
+            border-radius: 16px;
+            padding: 24px;
+            height: fit-content;
+            border: 1px solid #374151;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
         }
         
-        .franchise-controls select {
+        .filter-panel h3 {
+            font-size: 1.2rem;
+            margin-bottom: 24px;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid #374151;
+            padding-bottom: 15px;
+        }
+        
+        .filter-section {
+            margin-bottom: 24px;
+        }
+        
+        .filter-section h4 {
+            font-size: 0.9rem;
+            color: #9ca3af;
+            margin-bottom: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        /* Container para as opções (Tags) */
+        .filter-options-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        /* Custom Checkboxes/Radios como Tags */
+        .filter-option {
+            position: relative;
+            margin: 0; /* Reset */
+        }
+        
+        /* Esconde o input nativo */
+        .filter-option input[type="checkbox"], 
+        .filter-option input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+            height: 0;
+            width: 0;
+        }
+        
+        /* Estilo do Label (Aparencia do Botão) */
+        .filter-option label {
+            display: inline-block;
+            background-color: #1f2937;
+            color: #d1d5db;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            border: 1px solid #374151;
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+        
+        .filter-option label:hover {
+            background-color: #374151;
+            border-color: #4b5563;
+        }
+        
+        /* Estado Selecionado (Checked) */
+        .filter-option input:checked + label {
+            background: linear-gradient(135deg, #7c3aed, #ec4899);
+            color: white;
+            border-color: transparent;
+            box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+            font-weight: 600;
+        }
+        
+        /* Botões de Ação do Filtro */
+        .filter-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #374151;
+        }
+        
+        .btn-filter-apply {
+            background: transparent;
+            border: 1px solid #374151;
+            color: #d1d5db;
+            padding: 12px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+        
+        .btn-filter-apply:hover {
+            background: rgba(255,255,255,0.05);
+            color: white;
+        }
+        
+        .btn-filter-apply.primary {
+            background: #ec4899; /* Rosa para destaque */
+            border-color: transparent;
+            color: white;
+        }
+        
+        .btn-filter-apply.primary:hover {
+            background: #db2777;
+            box-shadow: 0 4px 15px rgba(236, 72, 153, 0.4);
+        }
+
+        /* Toggle Button para Mobile */
+        .mobile-filter-toggle {
+            display: none;
+            width: 100%;
+            padding: 12px;
             background: #1f2937;
             color: white;
-            border: 2px solid #374151;
-            padding: 12px 20px;
-            border-radius: 50px;
-            min-width: 220px;
+            border: 1px solid #374151;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            font-weight: 600;
             cursor: pointer;
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='white' class='bi bi-chevron-down' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 20px center;
-            transition: all 0.3s;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
-        .franchise-controls select:focus {
-            outline: none;
-            border-color: #7c3aed;
-            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.2);
+        @media (max-width: 991px) {
+            .mobile-filter-toggle { display: flex; }
+            .filter-panel { display: none; } /* Escondido por padrão no mobile */
+            .filter-panel.active { display: block; }
         }
 
         .franchise-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
             gap: 20px;
-            margin-top: 20px;
         }
         
         .franchise-card {
@@ -660,7 +787,6 @@
                         >
                         <i class="fas fa-search search-icon"></i>
                     </div>
-                    <!-- CSS FIX: Ocultar por padrão -->
                     <div class="search-info hidden" id="searchInfo">
                         <i class="fas fa-lightbulb"></i> Digite pelo menos 3 caracteres para buscar
                     </div>
@@ -695,61 +821,62 @@
                 </button>
 
                 <div class="franchise-container">
-                    <!-- Sidebar de Filtros -->
+                    <!-- Sidebar de Filtros (REDESENHADA) -->
                     <aside class="filter-panel" id="franchiseFilters">
-                        <h3>Filtros <i class="fas fa-sliders-h" style="font-size: 1rem;"></i></h3>
+                        <h3><i class="fas fa-sliders-h"></i> Filtros</h3>
                         
                         <!-- Seção de Ordenação -->
                         <div class="filter-section">
                             <h4>Ordenar por</h4>
-                            <div class="filter-option">
-                                <input type="radio" id="sortRel" name="sortOrder" value="popularity.desc" checked>
-                                <label for="sortRel">Relevância</label>
-                            </div>
-                            <div class="filter-option">
-                                <input type="radio" id="sortDateNew" name="sortOrder" value="release_date.desc">
-                                <label for="sortDateNew">Lançamento (Novo)</label>
-                            </div>
-                            <div class="filter-option">
-                                <input type="radio" id="sortDateOld" name="sortOrder" value="release_date.asc">
-                                <label for="sortDateOld">Lançamento (Antigo)</label>
-                            </div>
-                            <div class="filter-option">
-                                <input type="radio" id="sortRateHigh" name="sortOrder" value="vote_average.desc">
-                                <label for="sortRateHigh">Melhor Nota</label>
-                            </div>
-                            <div class="filter-option">
-                                <input type="radio" id="sortRateLow" name="sortOrder" value="vote_average.asc">
-                                <label for="sortRateLow">Pior Nota</label>
+                            <div class="filter-options-container">
+                                <div class="filter-option">
+                                    <input type="radio" id="sortRel" name="sortOrder" value="popularity.desc" checked>
+                                    <label for="sortRel">Relevância</label>
+                                </div>
+                                <div class="filter-option">
+                                    <input type="radio" id="sortDateNew" name="sortOrder" value="release_date.desc">
+                                    <label for="sortDateNew">Lançamento (Novo)</label>
+                                </div>
+                                <div class="filter-option">
+                                    <input type="radio" id="sortDateOld" name="sortOrder" value="release_date.asc">
+                                    <label for="sortDateOld">Lançamento (Antigo)</label>
+                                </div>
+                                <div class="filter-option">
+                                    <input type="radio" id="sortRateHigh" name="sortOrder" value="vote_average.desc">
+                                    <label for="sortRateHigh">Melhor Nota</label>
+                                </div>
+                                <div class="filter-option">
+                                    <input type="radio" id="sortRateLow" name="sortOrder" value="vote_average.asc">
+                                    <label for="sortRateLow">Pior Nota</label>
+                                </div>
                             </div>
                         </div>
 
                         <!-- Seção de Tipo de Mídia -->
                         <div class="filter-section">
                             <h4>Tipo de Mídia</h4>
-                            <div class="filter-option">
-                                <input type="checkbox" id="typeMovie" value="Filme" checked>
-                                <label for="typeMovie">Filmes</label>
-                            </div>
-                            <div class="filter-option">
-                                <input type="checkbox" id="typeSeries" value="Série" checked>
-                                <label for="typeSeries">Séries</label>
-                            </div>
-                            <div class="filter-option">
-                                <input type="checkbox" id="typeGame" value="Game" checked>
-                                <label for="typeGame">Games</label>
-                            </div>
-                            <div class="filter-option">
-                                <input type="checkbox" id="typeMusical" value="Musical" checked>
-                                <label for="typeMusical">Musicais</label>
-                            </div>
-                            <div class="filter-option">
-                                <input type="checkbox" id="typePlay" value="Peça" checked>
-                                <label for="typePlay">Peças</label>
-                            </div>
-                             <div class="filter-option">
-                                <input type="checkbox" id="typeDoc" value="Doc" checked> <!-- Novo tipo genérico -->
-                                <label for="typeDoc">Outros (Docs/OVAs)</label>
+                            <div class="filter-options-container">
+                                <div class="filter-option">
+                                    <input type="checkbox" id="typeMovie" value="Filme" checked>
+                                    <label for="typeMovie">Filmes</label>
+                                </div>
+                                <div class="filter-option">
+                                    <input type="checkbox" id="typeSeries" value="Série" checked>
+                                    <label for="typeSeries">Séries</label>
+                                </div>
+                                <!-- GAMES REMOVIDOS CONFORME SOLICITADO -->
+                                <div class="filter-option">
+                                    <input type="checkbox" id="typeMusical" value="Musical" checked>
+                                    <label for="typeMusical">Musicais</label>
+                                </div>
+                                <div class="filter-option">
+                                    <input type="checkbox" id="typePlay" value="Peça" checked>
+                                    <label for="typePlay">Peças</label>
+                                </div>
+                                <div class="filter-option">
+                                    <input type="checkbox" id="typeDoc" value="Doc" checked>
+                                    <label for="typeDoc">Outros</label>
+                                </div>
                             </div>
                         </div>
 
@@ -780,7 +907,6 @@
     <!-- Modal de Detalhes -->
     <div class="modal-overlay" id="modalDetails">
         <div class="modal-content">
-            <!-- Z-INDEX AUMENTADO E FUNÇÃO GLOBAL -->
             <button class="modal-close" onclick="window.closeModal()">
                 <i class="fas fa-times"></i>
             </button>
@@ -804,7 +930,6 @@
         const OMDB_API_KEY = 'f860b830';
         const TMDB_API_KEY = '952b590dc733b35aa97577fd50304ae0';
         const TMDB_BASE_IMAGE_URL = 'https://image.tmdb.org/t/p/w500'; 
-        // FALLBACK IMG CORRIGIDO PARA EVITAR 404
         const TMDB_FALLBACK_POSTER = 'https://via.placeholder.com/300x450/1f2937/9ca3af?text=Sem+Imagem';
         
         let franchiseItemsData = []; 
@@ -814,7 +939,6 @@
         const db = firebase.firestore();
         let currentUser = null;
         
-        // --- FUNÇÃO GLOBAL DE FECHAR MODAL (CORRIGIDO REFERENCE ERROR) ---
         window.closeModal = () => {
             const modal = document.getElementById('modalDetails');
             if (modal) {
@@ -839,7 +963,7 @@
             const modal = document.getElementById('modalDetails');
             const modalBody = document.getElementById('modalBody');
             modal.classList.add('active');
-            modalBody.innerHTML = `<div class="modal-loading"><div class="spinner"></div><p style="color:#9ca3af;">Carregando...</p></div>`;
+            modalBody.innerHTML = `<div class="modal-loading"><div class="spinner"></div><p style="color:#9ca3af;">Buscando informações detalhadas...</p></div>`;
 
             try {
                 let imdbId = null;
@@ -868,7 +992,6 @@
             const modalBody = document.getElementById('modalBody');
             const title = data.title || data.name;
             const year = (data.release_date || data.first_air_date || '').substring(0, 4);
-            // FIX: Uso do fallback se poster for null
             const posterUrl = data.poster_path ? TMDB_BASE_IMAGE_URL + data.poster_path : TMDB_FALLBACK_POSTER;
             const typeLabel = getMediaLabel({ title: title, name: title, genre_ids: data.genres ? data.genres.map(g => g.id) : [], media_type: mediaType });
             const fakeImdbId = `tmdb-${data.id}`;
@@ -1013,20 +1136,27 @@
             document.getElementById('franchiseFilters').classList.toggle('active');
         };
 
+        // BUSCA PROFUNDA DA FRANQUIA
+        async function fetchTmdbBroadSearch(query) {
+            const clean = query.replace(/Collection|Coleção|Saga/gi, '').trim();
+            let allResults = [];
+            // Busca até 3 páginas para garantir que pegue tudo
+            for (let page = 1; page <= 3; page++) {
+                try {
+                    const res = await fetch(`https://api.themoviedb.org/3/search/multi?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(clean)}&language=pt-BR&page=${page}`);
+                    if (res.ok) {
+                        const data = await res.json();
+                        allResults = [...allResults, ...data.results];
+                        if(page >= data.total_pages) break;
+                    } else break;
+                } catch (e) { break; }
+            }
+            return allResults;
+        }
+
         async function fetchTmdbCollection(collectionId) {
             const response = await fetch(`https://api.themoviedb.org/3/collection/${collectionId}?api_key=${TMDB_API_KEY}&language=pt-BR`);
             return response.ok ? await response.json() : null;
-        }
-        async function fetchTmdbBroadSearch(query) {
-             const clean = query.replace(/Collection|Coleção|Saga/gi, '').trim();
-             const res = await fetch(`https://api.themoviedb.org/3/search/multi?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(clean)}&language=pt-BR`);
-             return res.ok ? (await res.json()).results : [];
-        }
-        async function fetchOmdbGames(query) {
-             const clean = query.replace(/Collection|Coleção|Saga/gi, '').trim();
-             const res = await fetch(`https://www.omdbapi.com/?apikey=${OMDB_API_KEY}&s=${encodeURIComponent(clean)}&type=game`);
-             const data = await res.json();
-             return data.Response === 'True' ? data.Search : [];
         }
 
         window.openFranchiseView = async (collectionId, collectionName) => {
@@ -1043,21 +1173,19 @@
             try {
                 const collectionData = await fetchTmdbCollection(collectionId);
                 const officialMovies = collectionData ? collectionData.parts.map(i => ({...i, media_type: 'movie'})) : [];
+                // Agora chama a busca aprofundada (3 páginas)
                 const broadData = await fetchTmdbBroadSearch(collectionName);
-                const omdbGames = await fetchOmdbGames(collectionName);
-
-                // Normalize Games
-                const games = omdbGames.map(g => ({
-                    id: g.imdbID, title: g.Title, poster_path: g.Poster, 
-                    release_date: g.Year+'-01-01', media_type: 'game', vote_average: 0, is_omdb: true
-                }));
 
                 const combinedMap = new Map();
                 officialMovies.forEach(i => combinedMap.set(i.id, i));
-                broadData.forEach(i => { if(i.media_type!=='person' && !combinedMap.has(i.id)) combinedMap.set(i.id, i); });
-                games.forEach(g => combinedMap.set(g.id, g));
+                broadData.forEach(i => { 
+                    if((i.media_type === 'movie' || i.media_type === 'tv') && !combinedMap.has(i.id)) {
+                        combinedMap.set(i.id, i);
+                    }
+                });
 
-                franchiseItemsData = Array.from(combinedMap.values()).filter(i => i.poster_path && i.poster_path!=='N/A');
+                // Filtra itens sem poster ou sem título válido
+                franchiseItemsData = Array.from(combinedMap.values()).filter(i => i.poster_path && (i.title || i.name));
                 
                 document.getElementById('franchiseLoading').classList.add('hidden');
                 applyFranchiseFilters(); 
@@ -1069,12 +1197,12 @@
         };
 
         function getMediaLabel(item) {
-            if (item.media_type === 'game') return 'Game';
+            // Removed Game Logic
             const title = (item.title || item.name || '').toLowerCase();
             const genreIds = item.genre_ids || [];
             if (genreIds.includes(10402) || title.includes('musical')) return 'Musical';
             if (title.includes('stage') || title.includes('peça') || title.includes('teatro')) return 'Peça';
-            if (genreIds.includes(99) || title.includes('documentary')) return 'Doc'; // ID 99 is Documentary
+            if (genreIds.includes(99) || title.includes('documentary')) return 'Doc'; 
             return item.media_type === 'tv' ? 'Série' : 'Filme';
         }
 
@@ -1086,7 +1214,7 @@
             let filtered = franchiseItemsData.filter(item => {
                 const label = getMediaLabel(item);
                 const mapLabelToValue = {
-                    'Filme': 'Filme', 'Série': 'Série', 'Game': 'Game', 
+                    'Filme': 'Filme', 'Série': 'Série', 
                     'Musical': 'Musical', 'Peça': 'Peça', 'Doc': 'Doc'
                 };
                 return selectedTypes.includes(mapLabelToValue[label]);
@@ -1109,18 +1237,16 @@
                 const title = item.title || item.name;
                 const date = item.release_date || item.first_air_date;
                 const year = date ? date.substring(0, 4) : 'S/D';
-                // FIX: Fallback de imagem local
-                const poster = (item.is_omdb ? item.poster_path : (TMDB_BASE_IMAGE_URL + item.poster_path)) || TMDB_FALLBACK_POSTER;
+                const poster = item.poster_path ? (TMDB_BASE_IMAGE_URL + item.poster_path) : TMDB_FALLBACK_POSTER;
                 const vote = (item.vote_average||0).toFixed(1);
                 const label = getMediaLabel(item);
                 
                 let labelClass = 'media-card-type';
                 if(label==='Musical') labelClass += ' musical';
                 if(label==='Peça') labelClass += ' play';
-                if(label==='Game') labelClass += ' game';
                 if(label==='Doc') labelClass += ' doc';
 
-                const action = item.is_omdb ? `openDetailsModal('${item.id}')` : `openDetailsFromTmdbId(${item.id}, '${item.media_type}')`;
+                const action = `openDetailsFromTmdbId(${item.id}, '${item.media_type}')`;
 
                 return `
                     <div class="franchise-card" onclick="${action}">
@@ -1171,19 +1297,18 @@
                      const mov = await fetch(`https://api.themoviedb.org/3/movie/${fd.movie_results[0].id}?api_key=${TMDB_API_KEY}&language=pt-BR`);
                      const movD = await mov.json();
                      if(movD.belongs_to_collection) {
-                         // FIX: window.openFranchiseView garante que a função seja chamada no escopo global
                          franchiseHtml = `
                             <div class="franchise-header">
                                 <h3 class="section-title"><i class="fas fa-layer-group"></i> Mais de ${movD.belongs_to_collection.name}</h3>
                                 <button class="btn-franchise-details" onclick="window.openFranchiseView(${movD.belongs_to_collection.id}, '${movD.belongs_to_collection.name.replace(/'/g, "\\'")}')">
-                                    <i class="fas fa-list"></i> Ver todos os títulos
+                                    <i class="fas fa-list"></i> Ver todos os títulos de ${movD.belongs_to_collection.name}
                                 </button>
                             </div>`;
                      }
                  }
              } catch(e){}
              
-             // RECOMMENDATIONS (Restored)
+             // RECOMMENDATIONS
              let similarHtml = '';
              try {
                 const find = await fetch(`https://api.themoviedb.org/3/find/${imdbID}?external_source=imdb_id&api_key=${TMDB_API_KEY}`);
@@ -1197,7 +1322,7 @@
                     const recData = await recRes.json();
                     if(recData.results?.length) {
                         const sims = recData.results.slice(0, 6).map(t => `
-                            <div class="similar-item" onclick="openDetailsFromTmdbId(${t.id}, '${mediaType}'); closeModal();">
+                            <div class="similar-item" onclick="openDetailsFromTmdbId(${t.id}, '${mediaType}'); window.closeModal();">
                                 <img src="${TMDB_BASE_IMAGE_URL + t.poster_path}" onerror="this.src='${TMDB_FALLBACK_POSTER}'">
                                 <div class="similar-item-title">${t.title || t.name}</div>
                             </div>`).join('');
@@ -1205,7 +1330,6 @@
                     }
                 }
              } catch(e){}
-
 
              mb.innerHTML = `
                 <div class="modal-body">
