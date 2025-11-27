@@ -1010,6 +1010,39 @@
             }
         };
     </script>
+    <!-- Modal necessário para openDetailsModal funcionar -->
+<div id="modalDetails" style="
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.8);
+    backdrop-filter:blur(4px);
+    justify-content:center;
+    align-items:center;
+    z-index:99999;
+">
+    <div style="
+        background:#1f2937;
+        padding:20px;
+        max-width:400px;
+        border-radius:10px;
+        color:white;
+    ">
+        <h2 id="modalTitle">Título</h2>
+        <img id="modalPoster" src="" style="width:100%;border-radius:8px;margin-top:10px;">
+        <p id="modalPlot" style="margin-top:10px;">Descrição</p>
+        <button onclick="document.getElementById('modalDetails').style.display='none'" style="
+            background:#ef4444;
+            border:none;
+            padding:10px 14px;
+            border-radius:8px;
+            color:white;
+            cursor:pointer;
+            margin-top:10px;
+        ">Fechar</button>
+    </div>
+</div>
+
 </body>
     <script>
 function openDetailsModal(imdbID) {
@@ -1035,3 +1068,4 @@ function openDetailsModal(imdbID) {
 </script>
 
 </html>
+
