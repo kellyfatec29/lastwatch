@@ -100,7 +100,7 @@
             padding: 4px 10px; 
             border-radius: 12px; 
             font-size: 0.75rem;
-            font-weight: 600;
+            font-weight: 600; 
             text-transform: uppercase;
         }
         /* Estilo específico para Selos */
@@ -961,7 +961,7 @@
         const db = firebase.firestore();
         let currentUser = null;
         
-        // --- FUNÇÃO GLOBAL DE FECHAR MODAL (CORRIGIDA E EXPOSTA) ---
+        // --- FUNÇÃO GLOBAL DE FECHAR MODAL ---
         window.closeModal = () => {
             const modal = document.getElementById('modalDetails');
             if (modal) {
@@ -994,7 +994,6 @@
             return db.collection('artifacts').doc(appId).collection('users').doc(currentUser.uid).collection('watchlist');
         }
         
-        // ... (openDetailsFromTmdbId and renderTmdbFallbackModal same as before) ...
         window.openDetailsFromTmdbId = async (tmdbId, mediaType = 'movie') => {
             const modal = document.getElementById('modalDetails');
             const modalBody = document.getElementById('modalBody');
@@ -1061,7 +1060,6 @@
             if(user) loadMyList();
         });
         
-        // ... (Auth handlers maintained) ...
         document.getElementById('btnToggleAuth').addEventListener('click', () => {
             const login = document.getElementById('loginForm'); const signup = document.getElementById('signupForm');
             login.classList.toggle('hidden'); signup.classList.toggle('hidden');
@@ -1161,7 +1159,6 @@
             document.getElementById('seriesFields').classList.toggle('hidden', !isSeries);
             document.getElementById('trackSeason').value = 1;
             document.getElementById('trackEpisode').value = 1;
-            // Limpar campos de tempo
             document.getElementById('trackTimeHours').value = '';
             document.getElementById('trackTimeMinutes').value = '';
             document.getElementById('trackPlatformCustom').value = '';
@@ -1194,7 +1191,6 @@
             const season = isSeries ? parseInt(document.getElementById('trackSeason').value) || 1 : 0;
             const episode = isSeries ? parseInt(document.getElementById('trackEpisode').value) || 1 : 0;
             
-            // Converter Horas/Minutos para Minutos Totais
             const hours = parseInt(document.getElementById('trackTimeHours').value) || 0;
             const minutes = parseInt(document.getElementById('trackTimeMinutes').value) || 0;
             const totalTime = (hours * 60) + minutes;
@@ -1208,15 +1204,14 @@
             });
         };
 
-        // --- FIRESTORE SAVE LOGIC (UPDATED PATH AND ERROR HANDLING) ---
+        // --- FIRESTORE SAVE LOGIC (CORRIGIDO) ---
         async function saveToFirestore(trackingData) {
             if (!currentItemToAdd || !currentUser) return;
             
             try {
-                // USE CORRECT PATH FOR PERMISSIONS: artifacts/{appId}/users/{userId}/watchlist
+                // USE SECURE PATH
                 const watchlistCollection = getWatchlistCollection();
                 
-                // Check for duplicates using secure path
                 const existing = await watchlistCollection.where('imdbID', '==', currentItemToAdd.imdbID).get();
                 
                 if (!existing.empty) {
@@ -1233,7 +1228,6 @@
                 
                 showToast("Adicionado com sucesso!", "success");
                 closeTrackingModal();
-                // Only reload list if user is currently viewing it
                 if (!document.getElementById('myListView').classList.contains('hidden')) {
                     loadMyList();
                 }
@@ -1246,6 +1240,7 @@
         async function loadMyList() {
              if(!currentUser) return;
              try {
+                 // USE SECURE PATH
                  const watchlistCollection = getWatchlistCollection();
                  const snap = await watchlistCollection.get();
                  const content = document.getElementById('myListContent'); content.innerHTML = '';
@@ -1256,12 +1251,10 @@
                      const d = doc.data();
                      const action = d.imdbID.startsWith('tmdb-') ? `openDetailsFromTmdbId('${d.imdbID.replace('tmdb-','')}', 'movie')` : `openDetailsModal('${d.imdbID}')`;
                      
-                     // Formatar exibição do tracking
                      let trackingInfo = '';
                      if (d.status === 'Watching') {
                          if (d.type === 'series' || d.type === 'Série') trackingInfo = `<span class="badge bg-primary me-2">S${d.currentSeason} E${d.currentEpisode}</span>`;
                          
-                         // Converter minutos totais de volta para H:M para exibição
                          if (d.currentTime > 0) {
                              const h = Math.floor(d.currentTime / 60);
                              const m = d.currentTime % 60;
@@ -1284,7 +1277,6 @@
                  });
              } catch (e) {
                  console.error("Load error:", e);
-                 // Silently fail or show generic error if critical
              }
         }
 
