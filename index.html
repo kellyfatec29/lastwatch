@@ -106,7 +106,6 @@
         /* Estilo específico para Selos */
         .media-card-type.musical { background: linear-gradient(135deg, #ec4899, #f43f5e); }
         .media-card-type.play { background: linear-gradient(135deg, #8b5cf6, #d946ef); }
-        /* REMOVIDO ESTILO DE GAME */
         .media-card-type.doc { background: linear-gradient(135deg, #6b7280, #4b5563); } 
 
         .btn-add { 
@@ -507,173 +506,46 @@
         }
 
         #franchiseView {
-            display: flex;
-            flex-direction: column; /* Mobile first column layout */
             padding: 20px 0;
         }
         
-        /* Layout Grid para Desktop (Sidebar + Content) */
-        .franchise-container {
-            display: grid;
-            grid-template-columns: 1fr; /* Mobile padrão */
-            gap: 20px;
-        }
-        @media (min-width: 992px) {
-            .franchise-container {
-                grid-template-columns: 280px 1fr; /* Sidebar de 280px */
-            }
-        }
-
-        /* ESTILO DO PAINEL DE FILTROS (ATUALIZADO PARA TAGS) */
-        .filter-panel {
-            background: #111827;
-            border-radius: 16px;
-            padding: 24px;
-            height: fit-content;
-            border: 1px solid #374151;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
-        }
-        
-        .filter-panel h3 {
-            font-size: 1.2rem;
-            margin-bottom: 24px;
-            color: white;
+        .franchise-controls {
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            gap: 10px;
-            border-bottom: 1px solid #374151;
-            padding-bottom: 15px;
-        }
-        
-        .filter-section {
-            margin-bottom: 24px;
-        }
-        
-        .filter-section h4 {
-            font-size: 0.9rem;
-            color: #9ca3af;
-            margin-bottom: 12px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-        
-        /* Container para as opções (Tags) */
-        .filter-options-container {
-            display: flex;
+            margin-bottom: 30px;
             flex-wrap: wrap;
-            gap: 8px;
+            gap: 15px;
+            background: transparent; 
+            border: none;
+            padding: 0;
         }
         
-        /* Custom Checkboxes/Radios como Tags */
-        .filter-option {
-            position: relative;
-            margin: 0; /* Reset */
-        }
-        
-        /* Esconde o input nativo */
-        .filter-option input[type="checkbox"], 
-        .filter-option input[type="radio"] {
-            position: absolute;
-            opacity: 0;
-            cursor: pointer;
-            height: 0;
-            width: 0;
-        }
-        
-        /* Estilo do Label (Aparencia do Botão) */
-        .filter-option label {
-            display: inline-block;
-            background-color: #1f2937;
-            color: #d1d5db;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            font-weight: 500;
-            cursor: pointer;
-            border: 1px solid #374151;
-            transition: all 0.2s ease;
-            user-select: none;
-        }
-        
-        .filter-option label:hover {
-            background-color: #374151;
-            border-color: #4b5563;
-        }
-        
-        /* Estado Selecionado (Checked) */
-        .filter-option input:checked + label {
-            background: linear-gradient(135deg, #7c3aed, #ec4899);
-            color: white;
-            border-color: transparent;
-            box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
-            font-weight: 600;
-        }
-        
-        /* Botões de Ação do Filtro */
-        .filter-actions {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid #374151;
-        }
-        
-        .btn-filter-apply {
-            background: transparent;
-            border: 1px solid #374151;
-            color: #d1d5db;
-            padding: 12px;
-            border-radius: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-align: center;
-        }
-        
-        .btn-filter-apply:hover {
-            background: rgba(255,255,255,0.05);
-            color: white;
-        }
-        
-        .btn-filter-apply.primary {
-            background: #ec4899; /* Rosa para destaque */
-            border-color: transparent;
-            color: white;
-        }
-        
-        .btn-filter-apply.primary:hover {
-            background: #db2777;
-            box-shadow: 0 4px 15px rgba(236, 72, 153, 0.4);
-        }
-
-        /* Toggle Button para Mobile */
-        .mobile-filter-toggle {
-            display: none;
-            width: 100%;
-            padding: 12px;
+        .franchise-controls select {
             background: #1f2937;
             color: white;
-            border: 1px solid #374151;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            font-weight: 600;
+            border: 2px solid #374151;
+            padding: 12px 20px;
+            border-radius: 50px;
+            min-width: 220px;
             cursor: pointer;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='white' class='bi bi-chevron-down' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 20px center;
+            transition: all 0.3s;
         }
-        @media (max-width: 991px) {
-            .mobile-filter-toggle { display: flex; }
-            .filter-panel { display: none; } /* Escondido por padrão no mobile */
-            .filter-panel.active { display: block; }
+        .franchise-controls select:focus {
+            outline: none;
+            border-color: #7c3aed;
+            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.2);
         }
 
         .franchise-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
             gap: 20px;
+            margin-top: 20px;
         }
         
         .franchise-card {
@@ -735,7 +607,76 @@
             .modal-top-poster { width: 180px; height: 270px; }
             .modal-top-info { margin-left: 0; }
         }
-
+        
+        /* ESTILOS DO MODAL DE TRACKING */
+        .tracking-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .tracking-btn {
+            padding: 15px;
+            border-radius: 12px;
+            border: 2px solid #374151;
+            background: #1f2937;
+            color: white;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            text-align: center;
+        }
+        .tracking-btn:hover {
+            border-color: #7c3aed;
+            background: #2d3748;
+        }
+        .tracking-btn.primary {
+            background: linear-gradient(135deg, #7c3aed, #ec4899);
+            border: none;
+        }
+        .tracking-form {
+            background: #1f2937;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #374151;
+            margin-top: 15px;
+        }
+        .tracking-form h3 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+            color: #ec4899;
+        }
+        .tracking-input-group {
+            margin-bottom: 15px;
+        }
+        .tracking-input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+            color: #9ca3af;
+        }
+        .tracking-platforms {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        .platform-tag {
+            background: #0a0f1a;
+            border: 1px solid #374151;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .platform-tag.selected {
+            background: #7c3aed;
+            border-color: #7c3aed;
+            color: white;
+        }
+        
         .hidden { display: none !important; }
     </style>
 </head>
@@ -864,7 +805,6 @@
                                     <input type="checkbox" id="typeSeries" value="Série" checked>
                                     <label for="typeSeries">Séries</label>
                                 </div>
-                                <!-- GAMES REMOVIDOS CONFORME SOLICITADO -->
                                 <div class="filter-option">
                                     <input type="checkbox" id="typeMusical" value="Musical" checked>
                                     <label for="typeMusical">Musicais</label>
@@ -907,10 +847,75 @@
     <!-- Modal de Detalhes -->
     <div class="modal-overlay" id="modalDetails">
         <div class="modal-content">
+            <!-- Z-INDEX AUMENTADO E FUNÇÃO GLOBAL -->
             <button class="modal-close" onclick="window.closeModal()">
                 <i class="fas fa-times"></i>
             </button>
             <div id="modalBody"></div>
+        </div>
+    </div>
+
+    <!-- Modal de Tracking -->
+    <div class="modal-overlay" id="modalTracking">
+        <div class="modal-content" style="max-width: 500px;">
+            <button class="modal-close" onclick="window.closeTrackingModal()">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="modal-body">
+                <h3 class="text-center mb-4">Adicionar à Lista</h3>
+                
+                <div class="tracking-options" id="trackingInitialOptions">
+                    <button class="tracking-btn" onclick="saveWithoutTracking()">
+                        <i class="fas fa-bookmark mb-2" style="font-size: 1.5rem;"></i><br>
+                        Salvar sem Tracking<br>
+                        <span style="font-size: 0.8rem; font-weight: normal; color: #9ca3af;">(Quero ver depois)</span>
+                    </button>
+                    <button class="tracking-btn primary" onclick="showTrackingForm()">
+                        <i class="fas fa-play-circle mb-2" style="font-size: 1.5rem;"></i><br>
+                        Definir Tracking<br>
+                        <span style="font-size: 0.8rem; font-weight: normal; color: white;">(Já estou vendo)</span>
+                    </button>
+                </div>
+
+                <div id="trackingFormContainer" class="hidden tracking-form">
+                    <h3 id="trackingTitle">Configurar Progresso</h3>
+                    
+                    <!-- Campos dinâmicos baseados no tipo -->
+                    <div id="seriesFields" class="hidden">
+                        <div class="row">
+                            <div class="col-6 tracking-input-group">
+                                <label>Temporada</label>
+                                <input type="number" id="trackSeason" class="form-control" value="1" min="1">
+                            </div>
+                            <div class="col-6 tracking-input-group">
+                                <label>Episódio</label>
+                                <input type="number" id="trackEpisode" class="form-control" value="1" min="1">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="tracking-input-group">
+                        <label>Minutagem (Opcional)</label>
+                        <input type="number" id="trackTime" class="form-control" placeholder="Ex: 45 min" min="0">
+                    </div>
+
+                    <div class="tracking-input-group">
+                        <label>Onde você está assistindo?</label>
+                        <div class="tracking-platforms" id="platformSelector">
+                            <span class="platform-tag" onclick="selectPlatform(this)">Netflix</span>
+                            <span class="platform-tag" onclick="selectPlatform(this)">HBO Max</span>
+                            <span class="platform-tag" onclick="selectPlatform(this)">Prime Video</span>
+                            <span class="platform-tag" onclick="selectPlatform(this)">Disney+</span>
+                            <span class="platform-tag" onclick="selectPlatform(this)">Crunchyroll</span>
+                            <span class="platform-tag" onclick="selectPlatform(this)">Hulu</span>
+                            <span class="platform-tag" onclick="selectPlatform(this)">Outro</span>
+                        </div>
+                        <input type="text" id="trackPlatformCustom" class="form-control mt-2 hidden" placeholder="Digite o nome da plataforma">
+                    </div>
+
+                    <button class="btn btn-primary w-100 mt-3" onclick="saveWithTracking()">Salvar Progresso</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -933,6 +938,7 @@
         const TMDB_FALLBACK_POSTER = 'https://via.placeholder.com/300x450/1f2937/9ca3af?text=Sem+Imagem';
         
         let franchiseItemsData = []; 
+        let currentItemToAdd = null; // Stores item data for tracking modal
         
         if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
@@ -948,6 +954,11 @@
                 }, 300);
             }
         };
+
+        window.closeTrackingModal = () => {
+            document.getElementById('modalTracking').classList.remove('active');
+            currentItemToAdd = null;
+        }
 
         function showToast(message, type = 'error') {
             const container = document.getElementById('toastContainer');
@@ -1002,7 +1013,7 @@
                         <img src="${posterUrl}" alt="${title}" class="modal-top-poster" onerror="this.src='${TMDB_FALLBACK_POSTER}'">
                         <div class="modal-top-info">
                             <h2 class="modal-top-title">${title} (${year})</h2>
-                            <button class="btn-add-modal mb-3" onclick="addItemFromSearch('${fakeImdbId}', '${title.replace(/'/g, "\\'")}', '${year}', '${posterUrl}', '${typeLabel}', event)">
+                            <button class="btn-add-modal mb-3" onclick="openTrackingModal('${fakeImdbId}', '${title.replace(/'/g, "\\'")}', '${year}', '${posterUrl}', '${typeLabel}')">
                                 <i class="fas fa-plus-circle"></i> Adicionar à Minha Lista
                             </button>
                             <div class="modal-meta" style="justify-content: flex-start;">
@@ -1106,29 +1117,175 @@
                         <button class="btn-add"><i class="fas fa-plus"></i> Adicionar</button>
                     </div>`;
                  card.addEventListener('click', (e) => {
-                     if(e.target.closest('.btn-add')) { e.stopPropagation(); addItemFromSearch(media.imdbID, media.Title, media.Year, media.Poster, media.Type); }
+                     if(e.target.closest('.btn-add')) { e.stopPropagation(); openTrackingModal(media.imdbID, media.Title, media.Year, media.Poster, media.Type); }
                      else { openDetailsModal(media.imdbID); }
                  });
                  results.appendChild(card);
              });
         }
 
-        // --- WATCHLIST --- 
-        window.addItemFromSearch = async (imdbID, title, year, poster, type, event) => {
-             if(!currentUser) return showToast("Login necessário", "error");
-             await db.collection('watchlist').add({userId: currentUser.uid, imdbID, title, year, poster, type, addedAt: firebase.firestore.FieldValue.serverTimestamp()});
-             showToast("Adicionado!", "success");
+        // --- WATCHLIST & TRACKING --- 
+        
+        // Abre o modal de tracking
+        window.openTrackingModal = (imdbID, title, year, poster, type) => {
+            if (!currentUser) return showToast("Login necessário para adicionar à lista", "error");
+            
+            currentItemToAdd = { imdbID, title, year, poster, type };
+            
+            // Reset UI do modal
+            document.getElementById('modalTracking').classList.add('active');
+            document.getElementById('trackingInitialOptions').classList.remove('hidden');
+            document.getElementById('trackingFormContainer').classList.add('hidden');
+            
+            // Configura campos baseados no tipo
+            const isSeries = (type === 'series' || type === 'Série' || type === 'tv');
+            document.getElementById('seriesFields').classList.toggle('hidden', !isSeries);
+            
+            // Limpa inputs
+            document.getElementById('trackSeason').value = 1;
+            document.getElementById('trackEpisode').value = 1;
+            document.getElementById('trackTime').value = '';
+            document.getElementById('trackPlatformCustom').value = '';
+            document.querySelectorAll('.platform-tag').forEach(el => el.classList.remove('selected'));
         };
+
+        window.saveWithoutTracking = () => {
+            // Salva com status "Não Iniciado" (tracking zerado)
+            saveToFirestore({
+                currentSeason: 0,
+                currentEpisode: 0,
+                currentTime: 0,
+                platform: '',
+                status: 'Plan to Watch'
+            });
+        };
+
+        window.showTrackingForm = () => {
+            document.getElementById('trackingInitialOptions').classList.add('hidden');
+            document.getElementById('trackingFormContainer').classList.remove('hidden');
+        };
+        
+        window.selectPlatform = (element) => {
+             const isSelected = element.classList.contains('selected');
+             document.querySelectorAll('.platform-tag').forEach(el => el.classList.remove('selected'));
+             if (!isSelected) element.classList.add('selected');
+             
+             const customInput = document.getElementById('trackPlatformCustom');
+             if (element.textContent === 'Outro' && !isSelected) {
+                 customInput.classList.remove('hidden');
+                 customInput.focus();
+             } else {
+                 customInput.classList.add('hidden');
+             }
+        };
+
+        window.saveWithTracking = () => {
+            const isSeries = !document.getElementById('seriesFields').classList.contains('hidden');
+            const season = isSeries ? parseInt(document.getElementById('trackSeason').value) || 1 : 0;
+            const episode = isSeries ? parseInt(document.getElementById('trackEpisode').value) || 1 : 0;
+            const time = parseInt(document.getElementById('trackTime').value) || 0;
+            
+            let platform = '';
+            const selectedTag = document.querySelector('.platform-tag.selected');
+            if (selectedTag) {
+                platform = selectedTag.textContent === 'Outro' 
+                    ? document.getElementById('trackPlatformCustom').value 
+                    : selectedTag.textContent;
+            }
+
+            saveToFirestore({
+                currentSeason: season,
+                currentEpisode: episode,
+                currentTime: time,
+                platform: platform,
+                status: 'Watching'
+            });
+        };
+
+        async function saveToFirestore(trackingData) {
+            if (!currentItemToAdd || !currentUser) return;
+            
+            try {
+                // Verifica duplicidade
+                const existing = await db.collection('watchlist')
+                    .where('userId', '==', currentUser.uid)
+                    .where('imdbID', '==', currentItemToAdd.imdbID)
+                    .get();
+                
+                if (!existing.empty) {
+                    showToast('Item já está na lista! Use a lista para editar.', 'error');
+                    closeTrackingModal();
+                    return;
+                }
+
+                await db.collection('watchlist').add({
+                    userId: currentUser.uid,
+                    ...currentItemToAdd,
+                    ...trackingData,
+                    addedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                showToast("Adicionado com sucesso!", "success");
+                closeTrackingModal();
+                loadMyList(); // Atualiza a lista se estiver visível
+            } catch (e) {
+                showToast('Erro ao salvar: ' + e.message, 'error');
+            }
+        }
+
         async function loadMyList() {
              if(!currentUser) return;
              const snap = await db.collection('watchlist').where('userId','==',currentUser.uid).get();
              const content = document.getElementById('myListContent'); content.innerHTML = '';
+             
+             if (snap.empty) {
+                 content.innerHTML = '<p style="text-align:center; color:#9ca3af; padding: 20px;">Sua lista está vazia.</p>';
+                 return;
+             }
+
              snap.forEach(doc => {
                  const d = doc.data();
                  const action = d.imdbID.startsWith('tmdb-') ? `openDetailsFromTmdbId('${d.imdbID.replace('tmdb-','')}', 'movie')` : `openDetailsModal('${d.imdbID}')`;
-                 content.innerHTML += `<div class="list-item" onclick="${action}"><img src="${d.poster}" width="50"> <div>${d.title}</div></div>`;
+                 
+                 // Renderização do card na lista com infos de tracking
+                 let trackingInfo = '';
+                 if (d.status === 'Watching') {
+                     if (d.type === 'series' || d.type === 'Série') {
+                         trackingInfo = `<span class="badge bg-primary me-2">S${d.currentSeason} E${d.currentEpisode}</span>`;
+                     }
+                     if (d.currentTime > 0) trackingInfo += `<span class="badge bg-secondary me-2">${d.currentTime} min</span>`;
+                     if (d.platform) trackingInfo += `<span class="badge bg-info text-dark">${d.platform}</span>`;
+                 } else {
+                     trackingInfo = `<span class="badge bg-secondary">Planejado</span>`;
+                 }
+
+                 content.innerHTML += `
+                    <div class="list-item" onclick="${action}" style="cursor:pointer;">
+                        <img src="${d.poster}" width="50"> 
+                        <div>
+                            <h4>${d.title}</h4>
+                            <div class="mb-2">${trackingInfo}</div>
+                            <button class="btn-remove btn-sm" onclick="event.stopPropagation(); remove('${doc.id}')">Remover</button>
+                        </div>
+                    </div>`;
              });
         }
+
+        window.update = (id, field, value) => {
+            db.collection('watchlist').doc(id).update({[field]: parseInt(value) || 0}); 
+        };
+
+        window.remove = async (id) => {
+            if(true) { 
+                try {
+                    await db.collection('watchlist').doc(id).delete();
+                    showToast('Item removido com sucesso!', 'success');
+                    loadMyList();
+                } catch(e) {
+                    showToast('Erro ao remover: ' + e.message, 'error');
+                }
+            }
+        };
 
         // --- FRANCHISE & FILTERS ---
         
@@ -1136,29 +1293,16 @@
             document.getElementById('franchiseFilters').classList.toggle('active');
         };
 
-        // BUSCA PROFUNDA DA FRANQUIA
-        async function fetchTmdbBroadSearch(query) {
-            const clean = query.replace(/Collection|Coleção|Saga/gi, '').trim();
-            let allResults = [];
-            // Busca até 3 páginas para garantir que pegue tudo
-            for (let page = 1; page <= 3; page++) {
-                try {
-                    const res = await fetch(`https://api.themoviedb.org/3/search/multi?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(clean)}&language=pt-BR&page=${page}`);
-                    if (res.ok) {
-                        const data = await res.json();
-                        allResults = [...allResults, ...data.results];
-                        if(page >= data.total_pages) break;
-                    } else break;
-                } catch (e) { break; }
-            }
-            return allResults;
-        }
-
         async function fetchTmdbCollection(collectionId) {
             const response = await fetch(`https://api.themoviedb.org/3/collection/${collectionId}?api_key=${TMDB_API_KEY}&language=pt-BR`);
             return response.ok ? await response.json() : null;
         }
-
+        async function fetchTmdbBroadSearch(query) {
+             const clean = query.replace(/Collection|Coleção|Saga/gi, '').trim();
+             const res = await fetch(`https://api.themoviedb.org/3/search/multi?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(clean)}&language=pt-BR`);
+             return res.ok ? (await res.json()).results : [];
+        }
+        
         window.openFranchiseView = async (collectionId, collectionName) => {
             window.closeModal(); // FIX: Garante que o modal se feche
             showView('franchiseView');
@@ -1197,7 +1341,6 @@
         };
 
         function getMediaLabel(item) {
-            // Removed Game Logic
             const title = (item.title || item.name || '').toLowerCase();
             const genreIds = item.genre_ids || [];
             if (genreIds.includes(10402) || title.includes('musical')) return 'Musical';
@@ -1237,7 +1380,8 @@
                 const title = item.title || item.name;
                 const date = item.release_date || item.first_air_date;
                 const year = date ? date.substring(0, 4) : 'S/D';
-                const poster = item.poster_path ? (TMDB_BASE_IMAGE_URL + item.poster_path) : TMDB_FALLBACK_POSTER;
+                // FIX: Fallback de imagem local
+                const poster = (item.is_omdb ? item.poster_path : (TMDB_BASE_IMAGE_URL + item.poster_path)) || TMDB_FALLBACK_POSTER;
                 const vote = (item.vote_average||0).toFixed(1);
                 const label = getMediaLabel(item);
                 
@@ -1301,7 +1445,7 @@
                             <div class="franchise-header">
                                 <h3 class="section-title"><i class="fas fa-layer-group"></i> Mais de ${movD.belongs_to_collection.name}</h3>
                                 <button class="btn-franchise-details" onclick="window.openFranchiseView(${movD.belongs_to_collection.id}, '${movD.belongs_to_collection.name.replace(/'/g, "\\'")}')">
-                                    <i class="fas fa-list"></i> Ver todos os títulos de ${movD.belongs_to_collection.name}
+                                    <i class="fas fa-list"></i> Ver todos os títulos
                                 </button>
                             </div>`;
                      }
@@ -1337,7 +1481,7 @@
                         <img src="${d.Poster}" class="modal-top-poster" onerror="this.src='${TMDB_FALLBACK_POSTER}'">
                         <div class="modal-top-info">
                             <h2 class="modal-top-title">${d.Title}</h2>
-                            <button class="btn-add-modal mb-3" onclick="addItemFromSearch('${d.imdbID}', '${d.Title.replace(/'/g, "\\'")}', '${d.Year}', '${d.Poster}', '${d.Type}', event)">Adicionar à Lista</button>
+                            <button class="btn-add-modal mb-3" onclick="openTrackingModal('${d.imdbID}', '${d.Title.replace(/'/g, "\\'")}', '${d.Year}', '${d.Poster}', '${d.Type}')">Adicionar à Lista</button>
                             <div class="modal-meta"><span class="modal-badge">${d.Type}</span> <div class="modal-rating"><i class="fas fa-star"></i> ${d.imdbRating}</div></div>
                             <p class="text-secondary mt-2">${d.Genre}</p>
                         </div>
