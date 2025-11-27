@@ -40,16 +40,34 @@
         .search-icon { position: absolute; right: 24px; top: 50%; transform: translateY(-50%); color: #6b7280; font-size: 1.2rem; pointer-events: none; }
         .search-info { text-align: center; color: #9ca3af; margin-bottom: 30px; font-size: 0.95rem; }
         .media-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 20px; }
-        .media-card { 
-            background: #1f2937; 
-            border-radius: 16px; 
-            overflow: hidden; 
+        .media-card {
+            background: #1f2937;
+            border-radius: 16px;
+            overflow: hidden;
             transition: all 0.3s ease;
             cursor: pointer;
             border: 2px solid transparent;
+            position: relative;
         }
-        .media-card:hover { 
-            transform: translateY(-8px) scale(1.02); 
+        .media-card::after {
+            content: '👁️ Ver detalhes';
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(124, 58, 237, 0.9);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .media-card:hover::after {
+            opacity: 1;
+        }
+        .media-card:hover {
+            transform: translateY(-8px) scale(1.02);
             box-shadow: 0 20px 40px rgba(124, 58, 237, 0.3);
             border-color: #7c3aed;
         }
@@ -837,6 +855,9 @@
                                  media.Type === 'series' ? 'Série' : 
                                  media.Type;
                 
+                const cardId = `card-${media.imdbID}`;
+                card.id = cardId;
+                
                 card.innerHTML = `
                     <img 
                         src="${media.Poster !== 'N/A' ? media.Poster : 'https://via.placeholder.com/300x450/1f2937/9ca3af?text=Sem+Imagem'}" 
@@ -849,22 +870,31 @@
                             <span class="media-card-year">${media.Year}</span>
                             <span class="media-card-type">${typeLabel}</span>
                         </div>
-                        <button class="btn-add" onclick="addItemFromSearch('${media.imdbID}','${media.Title.replace(/'/g, "\\'")}','${media.Year}','${media.Poster}','${media.Type}')">
+                        <button class="btn-add" data-imdb="${media.imdbID}">
                             <i class="fas fa-plus"></i> Adicionar à Lista
                         </button>
                     </div>
                 `;
                 
-                // Adicionar click no card para abrir detalhes
-                card.style.cursor = 'pointer';
-                card.addEventListener('click', (e) => {
-                    // Não abrir se clicou no botão
-                    if (!e.target.closest('.btn-add')) {
-                        openDetailsModal(media.imdbID);
-                    }
-                });
-                
                 results.appendChild(card);
+                
+                // Adicionar evento de click no card inteiro DEPOIS de adicionar ao DOM
+                setTimeout(() => {
+                    const addedCard = document.getElementById(cardId);
+                    if (addedCard) {
+                        addedCard.addEventListener('click', function(e) {
+                            console.log('Card clicado!', media.imdbID);
+                            // Se clicou no botão, adicionar à lista
+                            if (e.target.closest('.btn-add')) {
+                                e.stopPropagation();
+                                addItemFromSearch(media.imdbID, media.Title, media.Year, media.Poster, media.Type);
+                            } else {
+                                // Se clicou em qualquer outra parte, abrir detalhes
+                                openDetailsModal(media.imdbID);
+                            }
+                        });
+                    }
+                }, 50);
             });
             
             // Scroll suave para os novos resultados (apenas quando carrega mais)
