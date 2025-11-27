@@ -1253,6 +1253,30 @@
                      }
                  }
              } catch(e){}
+             
+             // Restore Recommendations Logic (Was missing in previous correction context)
+             let similarHtml = '';
+             try {
+                const find = await fetch(`https://api.themoviedb.org/3/find/${imdbID}?external_source=imdb_id&api_key=${TMDB_API_KEY}`);
+                const fd = await find.json();
+                let tmdbId = null, mediaType = 'movie';
+                if (d.Type === 'movie' && fd.movie_results?.length) { tmdbId = fd.movie_results[0].id; mediaType = 'movie'; }
+                else if (d.Type === 'series' && fd.tv_results?.length) { tmdbId = fd.tv_results[0].id; mediaType = 'tv'; }
+                
+                if(tmdbId) {
+                    const recRes = await fetch(`https://api.themoviedb.org/3/${mediaType}/${tmdbId}/recommendations?api_key=${TMDB_API_KEY}&language=pt-BR`);
+                    const recData = await recRes.json();
+                    if(recData.results?.length) {
+                        const sims = recData.results.slice(0, 6).map(t => `
+                            <div class="similar-item" onclick="openDetailsFromTmdbId(${t.id}, '${mediaType}'); closeModal();">
+                                <img src="${TMDB_BASE_IMAGE_URL + t.poster_path}" onerror="this.src='${TMDB_FALLBACK_POSTER}'">
+                                <div class="similar-item-title">${t.title || t.name}</div>
+                            </div>`).join('');
+                        similarHtml = `<h3 class="section-title"><i class="fas fa-thumbs-up"></i> Recomendados</h3><div class="similar-grid">${sims}</div>`;
+                    }
+                }
+             } catch(e){}
+
 
              mb.innerHTML = `
                 <div class="modal-body">
@@ -1267,6 +1291,7 @@
                     </div>
                     <div class="modal-synopsis-box"><h4>Sinopse</h4><p class="synopsis">${d.Plot}</p></div>
                     ${franchiseHtml}
+                    ${similarHtml}
                 </div>`;
         }
     </script>
