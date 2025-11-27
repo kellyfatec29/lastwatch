@@ -1232,6 +1232,17 @@
             }
         };
         
+        // Helper function for label
+        function getMediaLabel(item) {
+            const title = (item.title || item.name || '').toLowerCase();
+            const genreIds = item.genre_ids || [];
+            
+            if (title.includes('musical') || genreIds.includes(10402)) return 'Musical'; // 10402 is Music
+            if (title.includes('stage') || title.includes('peça') || title.includes('teatro')) return 'Peça';
+            
+            return item.media_type === 'tv' ? 'Série' : 'Filme';
+        }
+
         window.sortAndDisplayFranchiseItems = () => {
             const sortBy = document.getElementById('franchiseSortSelect').value;
             const content = document.getElementById('franchiseContent');
@@ -1257,7 +1268,7 @@
                 const year = item.release_date ? item.release_date.substring(0, 4) : 'S/D';
                 const poster = TMDB_BASE_IMAGE_URL + item.poster_path;
                 const vote = (item.vote_average || 0).toFixed(1);
-                const typeLabel = item.media_type === 'tv' ? 'Série' : 'Filme';
+                const typeLabel = getMediaLabel(item); // Using new helper
 
                 return `
                     <div class="franchise-card" onclick="openDetailsFromTmdbId(${item.id}, '${item.media_type}')">
@@ -1265,7 +1276,10 @@
                         <div class="franchise-card-info">
                             <div class="franchise-card-title" title="${title}">${title}</div>
                             <div class="franchise-card-meta">
-                                <span>${year} • ${typeLabel}</span>
+                                <span>${year}</span>
+                                <span class="media-card-type" style="font-size: 0.75rem;">${typeLabel.toUpperCase()}</span>
+                            </div>
+                            <div class="franchise-card-meta" style="margin-top:5px;">
                                 <span><i class="fas fa-star" style="color:#fbbf24; margin-right: 3px;"></i> ${vote}</span>
                             </div>
                         </div>
@@ -1360,9 +1374,9 @@
                                 franchiseHtml = `
                                     <div class="franchise-header">
                                         <h3 class="section-title" style="margin: 30px 0 0 0;"><i class="fas fa-layer-group"></i> Mais de ${collectionName}</h3>
-                                        <!-- Texto do botão alterado: Mais filmes de [Franquia] -->
+                                        <!-- Texto do botão alterado conforme pedido -->
                                         <button class="btn-franchise-details" onclick="openFranchiseView(${collectionId}, '${collectionName.replace(/'/g, "\\'")}')">
-                                            <i class="fas fa-list"></i> Mais filmes de ${collectionName}
+                                            <i class="fas fa-list"></i> Ver todos os títulos de ${collectionName}
                                         </button>
                                     </div>
                                     <div class="similar-grid" style="margin-bottom: 30px;">
@@ -1417,7 +1431,7 @@
                     }).join('');
 
                     similarHtml = `
-                        <h3 class="section-title"><i class="fas fa-clone"></i> Parecidos com ${omdbData.Title}</h3>
+                        <h3 class="section-title"><i class="fas fa-thumbs-up"></i> Recomendados</h3>
                         <div class="similar-grid">
                             ${similarItemsHtml}
                         </div>
