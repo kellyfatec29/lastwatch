@@ -206,7 +206,7 @@
             color: white;
             font-size: 1.2rem;
             cursor: pointer;
-            z-index: 10;
+            z-index: 50; /* Aumentado para garantir clique */
             transition: all 0.3s;
         }
         .modal-close:hover {
@@ -477,15 +477,13 @@
         .list-item img { width: 120px; height: 180px; border-radius: 10px; object-fit: cover; }
         .btn-remove { background: #dc2626; border: none; padding: 10px 20px; color: white; cursor: pointer; }
         
-        /* --- ESTILOS REFORMULADOS PARA FRANQUIA E FILTROS --- */
+        /* --- ESTILOS APRIMORADOS PARA FRANQUIA --- */
         
         .franchise-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
-            flex-wrap: wrap;
-            gap: 15px;
         }
         
         .btn-franchise-details {
@@ -505,134 +503,46 @@
         }
 
         #franchiseView {
-            display: flex;
-            flex-direction: column; /* Mobile first column layout */
             padding: 20px 0;
         }
         
-        /* Layout Grid para Desktop (Sidebar + Content) */
-        .franchise-container {
-            display: grid;
-            grid-template-columns: 1fr; /* Mobile padrão */
-            gap: 20px;
-        }
-        @media (min-width: 992px) {
-            .franchise-container {
-                grid-template-columns: 280px 1fr; /* Sidebar de 280px */
-            }
-        }
-
-        /* Estilo do Painel de Filtros (Sidebar) */
-        .filter-panel {
-            background: #1f2937;
-            border-radius: 16px;
-            padding: 20px;
-            height: fit-content;
-            border: 1px solid #374151;
-        }
-        
-        .filter-panel h3 {
-            font-size: 1.2rem;
-            margin-bottom: 20px;
-            color: white;
+        .franchise-controls {
             display: flex;
-            align-items: center;
             justify-content: space-between;
-        }
-        
-        .filter-section {
-            margin-bottom: 25px;
-            border-bottom: 1px solid #374151;
-            padding-bottom: 20px;
-        }
-        .filter-section:last-child {
-            border-bottom: none;
-        }
-        
-        .filter-section h4 {
-            font-size: 1rem;
-            color: #9ca3af;
-            margin-bottom: 15px;
-            font-weight: 600;
-        }
-        
-        /* Custom Checkboxes para Filtros */
-        .filter-option {
-            display: flex;
             align-items: center;
-            margin-bottom: 10px;
-            cursor: pointer;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+            background: transparent; 
+            border: none;
+            padding: 0;
         }
-        .filter-option input[type="checkbox"], 
-        .filter-option input[type="radio"] {
-            accent-color: #ec4899; /* Cor do tema */
-            width: 18px;
-            height: 18px;
-            margin-right: 10px;
-            cursor: pointer;
-        }
-        .filter-option label {
-            font-size: 0.95rem;
-            cursor: pointer;
-            color: #d1d5db;
-        }
-
-        /* Botões de Ação do Filtro */
-        .filter-actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-        }
-        .btn-filter-apply {
-            flex: 1;
+        
+        .franchise-controls select {
             background: #1f2937;
-            border: 1px solid #374151;
             color: white;
-            padding: 10px;
-            border-radius: 8px;
-            font-weight: 600;
+            border: 2px solid #374151;
+            padding: 12px 20px;
+            border-radius: 50px;
+            min-width: 220px;
             cursor: pointer;
-            transition: all 0.2s;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='white' class='bi bi-chevron-down' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 20px center;
+            transition: all 0.3s;
         }
-        .btn-filter-apply:hover {
-            background: #374151;
-        }
-        .btn-filter-apply.primary {
-            background: #0f172a; /* Darker for contrast */
+        .franchise-controls select:focus {
+            outline: none;
             border-color: #7c3aed;
-            color: #7c3aed;
-        }
-        .btn-filter-apply.primary:hover {
-            background: #7c3aed;
-            color: white;
-        }
-
-        /* Toggle Button para Mobile */
-        .mobile-filter-toggle {
-            display: none;
-            width: 100%;
-            padding: 12px;
-            background: #1f2937;
-            color: white;
-            border: 1px solid #374151;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            font-weight: 600;
-            cursor: pointer;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-        @media (max-width: 991px) {
-            .mobile-filter-toggle { display: flex; }
-            .filter-panel { display: none; } /* Escondido por padrão no mobile */
-            .filter-panel.active { display: block; }
+            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.2);
         }
 
         .franchise-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
             gap: 20px;
+            margin-top: 20px;
         }
         
         .franchise-card {
@@ -677,7 +587,7 @@
             align-items: center;
         }
         .franchise-loading {
-             text-align: center; padding: 60px 0; grid-column: 1 / -1;
+             text-align: center; padding: 60px 0;
         }
         
         .modal-top-section { display: flex; gap: 25px; margin-bottom: 30px; align-items: flex-start; }
@@ -688,6 +598,8 @@
         .modal-synopsis-box h4 { font-size: 1.1rem; font-weight: 700; color: #ec4899; margin-bottom: 10px; }
 
         @media (max-width: 768px) {
+            .franchise-controls { flex-direction: column; align-items: flex-start; gap: 10px; }
+            .franchise-controls select { width: 100%; }
             .modal-top-section { flex-direction: column; align-items: center; text-align: center; }
             .modal-top-poster { width: 180px; height: 270px; }
             .modal-top-info { margin-left: 0; }
@@ -697,7 +609,6 @@
     </style>
 </head>
 <body>
-    <!-- ... resto do HTML mantido, apenas CSS acima foi completamente substituído pelo original + estilos compatíveis ... -->
     <div id="authContainer" class="auth-container">
         <div class="auth-box">
             <div class="logo text-center mb-4">
@@ -745,7 +656,7 @@
                         >
                         <i class="fas fa-search search-icon"></i>
                     </div>
-                    <div class="search-info" id="searchInfo">
+                    <div class="search-info hidden" id="searchInfo">
                         <i class="fas fa-lightbulb"></i> Digite pelo menos 3 caracteres para buscar
                     </div>
                     <div id="searchLoading" class="loading-spinner hidden">
@@ -1001,8 +912,28 @@
         // --- SEARCH ---
         let searchTimeout;
         document.getElementById('searchInput').addEventListener('input', (e) => {
+            const query = e.target.value.trim();
             clearTimeout(searchTimeout);
-            searchTimeout = setTimeout(() => performSearch(e.target.value.trim(), 1, true), 500);
+            const searchInfo = document.getElementById('searchInfo');
+            const emptySearch = document.getElementById('emptySearch');
+            
+            if (query === '') {
+                searchInfo.classList.add('hidden');
+                emptySearch.classList.remove('hidden');
+                document.getElementById('searchResults').innerHTML = '';
+                document.getElementById('resultsCounter').classList.add('hidden');
+                return;
+            }
+            
+            if(query.length < 3) {
+                searchInfo.classList.remove('hidden');
+                searchInfo.innerHTML = `<i class="fas fa-keyboard"></i> Digite mais ${3 - query.length} caractere(s)...`;
+                emptySearch.classList.add('hidden');
+            } else {
+                searchInfo.classList.remove('hidden');
+                searchInfo.innerHTML = '<i class="fas fa-search"></i> Buscando...';
+                searchTimeout = setTimeout(() => performSearch(query, 1, true), 500);
+            }
         });
 
         async function performSearch(query, page = 1, clearResults = true) {
@@ -1087,6 +1018,7 @@
         }
 
         window.openFranchiseView = async (collectionId, collectionName) => {
+            closeModal(); // <--- FECHA O MODAL AO CLICAR NO BOTÃO
             showView('franchiseView');
             document.getElementById('franchiseTitle').textContent = `Franquia: ${collectionName}`;
             document.getElementById('franchiseContent').innerHTML = '';
@@ -1212,23 +1144,14 @@
 
         // --- MODAL OPEN (OMDB) ---
         window.openDetailsModal = async (imdbID) => {
-             // ... (Existing openDetailsModal logic maintained) ...
-             // For brevity, inserting simplified core logic which calls openFranchiseView button
              const modal = document.getElementById('modalDetails');
              modal.classList.add('active');
              const mb = document.getElementById('modalBody');
              mb.innerHTML = '<div class="modal-loading"><div class="spinner"></div></div>';
              
-             // Fetch and Render... (omitted for brevity as it's large, but logic is preserved)
-             // IMPORTANT: Ensure the button in franchise section uses openFranchiseView correctly
              const response = await fetch(`https://www.omdbapi.com/?apikey=${OMDB_API_KEY}&i=${imdbID}&plot=full`);
              const d = await response.json();
-             // ... TMDb logic to get collectionId ...
-             // render...
-             // The button HTML in the modal:
-             // <button class="btn-franchise-details" onclick="openFranchiseView(${colId}, '${colName}')">...</button>
              
-             // Re-implementing the full function to ensure no regression:
              if (d.Response === 'False') {
                  if (imdbID.startsWith('tmdb-')) return openDetailsFromTmdbId(imdbID.replace('tmdb-', ''), 'movie');
                  mb.innerHTML = 'Erro'; return;
@@ -1254,7 +1177,7 @@
                  }
              } catch(e){}
              
-             // Restore Recommendations Logic (Was missing in previous correction context)
+             // RECOMMENDATIONS (Restored)
              let similarHtml = '';
              try {
                 const find = await fetch(`https://api.themoviedb.org/3/find/${imdbID}?external_source=imdb_id&api_key=${TMDB_API_KEY}`);
