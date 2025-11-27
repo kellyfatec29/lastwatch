@@ -100,13 +100,14 @@
             padding: 4px 10px; 
             border-radius: 12px; 
             font-size: 0.75rem;
-            font-weight: 600; 
+            font-weight: 600;
             text-transform: uppercase;
         }
         /* Estilo específico para Selos */
         .media-card-type.musical { background: linear-gradient(135deg, #ec4899, #f43f5e); }
         .media-card-type.play { background: linear-gradient(135deg, #8b5cf6, #d946ef); }
-        .media-card-type.doc { background: linear-gradient(135deg, #6b7280, #4b5563); } 
+        .media-card-type.game { background: linear-gradient(135deg, #10b981, #059669); } /* Verde para Games */
+        .media-card-type.doc { background: linear-gradient(135deg, #6b7280, #4b5563); } /* Cinza para Docs */
 
         .btn-add { 
             width: 100%; 
@@ -961,7 +962,7 @@
         const db = firebase.firestore();
         let currentUser = null;
         
-        // --- FUNÇÃO GLOBAL DE FECHAR MODAL ---
+        // --- FUNÇÃO GLOBAL DE FECHAR MODAL (CORRIGIDA E EXPOSTA) ---
         window.closeModal = () => {
             const modal = document.getElementById('modalDetails');
             if (modal) {
@@ -994,6 +995,7 @@
             return db.collection('artifacts').doc(appId).collection('users').doc(currentUser.uid).collection('watchlist');
         }
         
+        // ... (openDetailsFromTmdbId and renderTmdbFallbackModal same as before) ...
         window.openDetailsFromTmdbId = async (tmdbId, mediaType = 'movie') => {
             const modal = document.getElementById('modalDetails');
             const modalBody = document.getElementById('modalBody');
@@ -1159,6 +1161,7 @@
             document.getElementById('seriesFields').classList.toggle('hidden', !isSeries);
             document.getElementById('trackSeason').value = 1;
             document.getElementById('trackEpisode').value = 1;
+            // Limpar campos de tempo
             document.getElementById('trackTimeHours').value = '';
             document.getElementById('trackTimeMinutes').value = '';
             document.getElementById('trackPlatformCustom').value = '';
@@ -1191,6 +1194,7 @@
             const season = isSeries ? parseInt(document.getElementById('trackSeason').value) || 1 : 0;
             const episode = isSeries ? parseInt(document.getElementById('trackEpisode').value) || 1 : 0;
             
+            // Converter Horas/Minutos para Minutos Totais
             const hours = parseInt(document.getElementById('trackTimeHours').value) || 0;
             const minutes = parseInt(document.getElementById('trackTimeMinutes').value) || 0;
             const totalTime = (hours * 60) + minutes;
