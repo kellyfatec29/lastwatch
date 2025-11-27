@@ -966,7 +966,6 @@
             const modal = document.getElementById('modalDetails');
             if (modal) {
                 modal.classList.remove('active');
-                // Limpar conteúdo após transição
                 setTimeout(() => {
                     if(!modal.classList.contains('active')) {
                          document.getElementById('modalBody').innerHTML = ''; 
@@ -1000,7 +999,7 @@
             const modal = document.getElementById('modalDetails');
             const modalBody = document.getElementById('modalBody');
             modal.classList.add('active');
-            modalBody.innerHTML = `<div class="modal-loading"><div class="spinner"></div><p style="color:#9ca3af;">Carregando...</p></div>`;
+            modalBody.innerHTML = `<div class="modal-loading"><div class="spinner"></div><p style="color:#9ca3af;">Buscando informações detalhadas...</p></div>`;
 
             try {
                 let imdbId = null;
@@ -1062,6 +1061,7 @@
             if(user) loadMyList();
         });
         
+        // ... (Auth handlers maintained) ...
         document.getElementById('btnToggleAuth').addEventListener('click', () => {
             const login = document.getElementById('loginForm'); const signup = document.getElementById('signupForm');
             login.classList.toggle('hidden'); signup.classList.toggle('hidden');
@@ -1322,7 +1322,7 @@
         }
 
         window.openFranchiseView = async (collectionId, collectionName) => {
-            window.closeModal(); // FECHA O MODAL GARANTIDO
+            window.closeModal(); 
             showView('franchiseView');
             document.getElementById('franchiseTitle').textContent = `Franquia: ${collectionName}`;
             document.getElementById('franchiseContent').innerHTML = '';
@@ -1357,7 +1357,6 @@
             return item.media_type === 'tv' ? 'Série' : 'Filme';
         }
 
-        // Filter & Sort Logic
         window.applyFranchiseFilters = () => {
             const sortVal = document.querySelector('input[name="sortOrder"]:checked').value;
             const selectedTypes = Array.from(document.querySelectorAll('#franchiseFilters input[type=checkbox]:checked')).map(cb => cb.value);
@@ -1420,7 +1419,6 @@
             applyFranchiseFilters();
         };
 
-        // --- MODAL OPEN (OMDB) ---
         window.openDetailsModal = async (imdbID) => {
              const modal = document.getElementById('modalDetails');
              modal.classList.add('active');
