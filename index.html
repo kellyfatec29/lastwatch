@@ -763,54 +763,60 @@
             }, 3000);
         }
         
-        window.performSearchAndOpenModal = async (title) => {
-            // FIX: NÃO fecha o modal, apenas mostra loading dentro dele para transição suave
+        // --- NOVA FUNÇÃO PARA ABRIR DETALHES USANDO ID DO TMDB ---
+        window.openDetailsFromTmdbId = async (tmdbId, mediaType = 'movie') => {
+            // Mostrar loading no modal
+            const modal = document.getElementById('modalDetails');
             const modalBody = document.getElementById('modalBody');
-            if(modalBody) {
-                modalBody.innerHTML = `
-                    <div class="modal-loading">
-                        <div class="spinner"></div>
-                        <p style="color: #9ca3af;">Buscando detalhes para "${title}"...</p>
-                    </div>
-                `;
-            } else {
-                // Se o modal não estiver aberto por algum motivo, abre vazio com loading
-                const modal = document.getElementById('modalDetails');
-                modal.classList.add('active');
-                document.getElementById('modalBody').innerHTML = `
-                    <div class="modal-loading">
-                        <div class="spinner"></div>
-                        <p style="color: #9ca3af;">Carregando...</p>
-                    </div>
-                `;
-            }
             
+            modal.classList.add('active');
+            modalBody.innerHTML = `
+                <div class="modal-loading">
+                    <div class="spinner"></div>
+                    <p style="color: #9ca3af;">Buscando informações detalhadas...</p>
+                </div>
+            `;
+
             try {
-                // Ao invés de buscar por título (que pode falhar), usaremos a busca do OMDB
-                const response = await fetch(`https://www.omdbapi.com/?apikey=${OMDB_API_KEY}&s=${encodeURIComponent(title)}&page=1`);
-                const data = await response.json();
+                let imdbId = null;
                 
-                if (data.Response === 'True' && data.Search.length > 0) {
-                    const firstMatch = data.Search[0];
-                    openDetailsModal(firstMatch.imdbID);
+                // Se for filme, busca detalhes do filme
+                if (mediaType === 'movie') {
+                    const response = await fetch(`https://api.themoviedb.org/3/movie/${tmdbId}?api_key=${TMDB_API_KEY}`);
+                    const data = await response.json();
+                    imdbId = data.imdb_id;
+                } 
+                // Se for série, busca IDs externos da série
+                else {
+                    const response = await fetch(`https://api.themoviedb.org/3/tv/${tmdbId}/external_ids?api_key=${TMDB_API_KEY}`);
+                    const data = await response.json();
+                    imdbId = data.imdb_id;
+                }
+
+                if (imdbId) {
+                    // Sucesso! Abre o modal normal com o ID do IMDb
+                    openDetailsModal(imdbId);
                 } else {
-                    // CORREÇÃO: Não fecha o modal se falhar, exibe erro dentro dele
-                    if(modalBody) {
-                        modalBody.innerHTML = `
-                            <div style="text-align: center; padding: 40px;">
-                                <i class="fas fa-exclamation-circle" style="font-size: 3rem; color: #ef4444; margin-bottom: 20px;"></i>
-                                <h3>Detalhes não encontrados</h3>
-                                <p style="color: #9ca3af;">Não encontramos informações detalhadas para "${title}" na nossa base principal.</p>
-                                <button class="btn btn-primary mt-3" onclick="closeModal()" style="max-width: 200px;">Fechar</button>
-                            </div>
-                        `;
-                    }
+                    // Se não tiver ID do IMDb no TMDb, mostra erro
+                    modalBody.innerHTML = `
+                        <div style="text-align: center; padding: 40px;">
+                            <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: #fbbf24; margin-bottom: 20px;"></i>
+                            <h3>Informações limitadas</h3>
+                            <p style="color: #9ca3af;">Este título não possui correspondência na nossa base principal (IMDb).</p>
+                            <button class="btn btn-primary mt-3" onclick="closeModal()" style="max-width: 200px;">Fechar</button>
+                        </div>
+                    `;
                 }
             } catch (e) {
-                showToast(`Erro ao buscar detalhes de "${title}".`, 'error');
-                // Mantém o modal aberto com erro se possível, ou fecha se crítico
-                if(modalBody) modalBody.innerHTML = `<p class="text-center p-4 text-danger">Erro de conexão.</p>`;
+                console.error("Erro ao buscar ID externo:", e);
+                modalBody.innerHTML = `<p class="text-center p-4 text-danger">Erro de conexão com o servidor de dados.</p>`;
             }
+        }
+
+        window.performSearchAndOpenModal = async (title) => {
+            // MANTIDA COMO FALLBACK (caso necessário), mas não usada nos cards de sugestão
+            // ... (código anterior) ...
+             openDetailsFromTmdbId(title); // Placeholder - não deve ser chamado
         }
 
 
@@ -1254,7 +1260,7 @@
                 const typeLabel = item.media_type === 'tv' ? 'Série' : 'Filme';
 
                 return `
-                    <div class="franchise-card" onclick="performSearchAndOpenModal('${title.replace(/'/g, "\\'")}')">
+                    <div class="franchise-card" onclick="openDetailsFromTmdbId(${item.id}, '${item.media_type}')">
                         <img src="${poster}" alt="${title}" onerror="this.src='${TMDB_FALLBACK_POSTER}'">
                         <div class="franchise-card-info">
                             <div class="franchise-card-title" title="${title}">${title}</div>
@@ -1344,7 +1350,7 @@
                                     const mediaTitle = t.title || t.name;
                                     
                                     return `
-                                        <div class="similar-item" onclick="performSearchAndOpenModal('${mediaTitle.replace(/'/g, "\\'")}')">
+                                        <div class="similar-item" onclick="openDetailsFromTmdbId(${t.id}, 'movie')">
                                             <img src="${posterSrc}" alt="${mediaTitle} Poster" onerror="this.src='${TMDB_FALLBACK_POSTER}'">
                                             <div class="similar-item-title" title="${mediaTitle}">${mediaTitle}</div>
                                         </div>
@@ -1403,7 +1409,7 @@
                         const mediaTitle = t.title || t.name; 
                         
                         return `
-                            <div class="similar-item" onclick="performSearchAndOpenModal('${mediaTitle.replace(/'/g, "\\'")}')">
+                            <div class="similar-item" onclick="openDetailsFromTmdbId(${t.id}, '${omdbType}')">
                                 <img src="${posterSrc}" alt="${mediaTitle} Poster" onerror="this.src='${TMDB_FALLBACK_POSTER}'">
                                 <div class="similar-item-title" title="${mediaTitle}">${mediaTitle}</div>
                             </div>
